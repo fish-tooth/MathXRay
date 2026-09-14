@@ -166,28 +166,27 @@ footer b{color:var(--ink)}
 
 <section class="alt" id="results">
   <div class="wrap">
-    <h2>初步结果</h2>
-    <p class="lead">在 ProcessBench 分层采样的 20 条样本上，跑了一个最直接的基线（直接让模型判断过程对错并定位首错）。这是初步结果，不是最终结论。</p>
+    <h2>三数据集主结果</h2>
+    <p class="lead">ProcessBench 上 GSM8K + MATH + Omni-MATH 的 Hy3 Direct Judge（n = 244，由 raw JSONL 重算）。OlympiadBench 另表报告，不并入本切片。</p>
     <div class="grid c2">
       <div class="card">
         <h3>总体指标</h3>
-        <div class="metric"><div class="k"><b>M1 错误检出</b></div><div class="bar"><i style="width:46%"></i></div><div class="v">0.462</div></div>
-        <div class="metric"><div class="k"><b>M2 首错定位</b></div><div class="bar"><i class="warn" style="width:31%"></i></div><div class="v">0.308</div></div>
-        <div class="metric"><div class="k"><b>M3 正确通过</b></div><div class="bar"><i style="width:86%"></i></div><div class="v">0.857</div></div>
-        <div class="metric"><div class="k"><b>M4 过程二分类</b></div><div class="bar"><i style="width:60%"></i></div><div class="v">0.600</div></div>
-        <div class="metric"><div class="k"><b>M5 官方综合</b></div><div class="bar"><i style="width:50%"></i></div><div class="v">0.500</div></div>
+        <div class="metric"><div class="k"><b>M1 错误检出</b></div><div class="bar"><i style="width:98%"></i></div><div class="v">0.976</div></div>
+        <div class="metric"><div class="k"><b>M2 首错定位</b></div><div class="bar"><i style="width:78%"></i></div><div class="v">0.782</div></div>
+        <div class="metric"><div class="k"><b>M3 正确通过</b></div><div class="bar"><i style="width:87%"></i></div><div class="v">0.873</div></div>
+        <div class="metric"><div class="k"><b>M4 过程二分类</b></div><div class="bar"><i style="width:94%"></i></div><div class="v">0.943</div></div>
+        <div class="metric"><div class="k"><b>M5 官方综合</b></div><div class="bar"><i style="width:81%"></i></div><div class="v">0.811</div></div>
       </div>
       <div class="card">
         <h3>M2 首错定位 · 分来源</h3>
-        <div class="metric"><div class="k"><b>gsm8k</b></div><div class="bar"><i style="width:100%"></i></div><div class="v">1.000</div></div>
-        <div class="metric"><div class="k"><b>math</b></div><div class="bar"><i style="width:25%"></i></div><div class="v">0.250</div></div>
-        <div class="metric"><div class="k"><b>olympiadbench</b></div><div class="bar"><i style="width:0%"></i></div><div class="v">0.000</div></div>
-        <div class="metric"><div class="k"><b>omnimath</b></div><div class="bar"><i style="width:25%"></i></div><div class="v">0.250</div></div>
+        <div class="metric"><div class="k"><b>gsm8k · D1</b></div><div class="bar"><i style="width:84%"></i></div><div class="v">0.842</div></div>
+        <div class="metric"><div class="k"><b>math · D3</b></div><div class="bar"><i style="width:81%"></i></div><div class="v">0.810</div></div>
+        <div class="metric"><div class="k"><b>omnimath · D5</b></div><div class="bar"><i style="width:75%"></i></div><div class="v">0.747</div></div>
       </div>
     </div>
     <div class="grid c2" style="margin-top:16px">
-      <div class="card"><h3>能解析的都判对了</h3><p>成功解析的 12 条里，过程对错全部与标注一致（6 条正确全判对、6 条有错全判错）。</p></div>
-      <div class="card"><h3>8 条失败是配额问题</h3><p>推理链过长耗尽输出上限，导致内容为空。属于配置问题，不是判断力问题。</p></div>
+      <div class="card"><h3>能力边界在 D3 → D5</h3><p>First-Error Exact 最大相邻降幅为 0.063（MATH 0.810 → Omni-MATH 0.747）。竞赛难度上开始更明显地漏掉根因。</p></div>
+      <div class="card"><h3>答案对、过程不一定对</h3><p>Gold A✓P✗ 37 条，评估器召回 0.919。应用里用案例 3 展示「碰巧算对」。</p></div>
     </div>
   </div>
 </section>
@@ -198,9 +197,9 @@ footer b{color:var(--ink)}
     <div class="tl">
       <div class="tl-item"><div class="tl-dot done"></div><span class="tl-title">Phase 0 · 文档与实验地基</span><span class="tl-state">已完成</span><div class="tl-desc">规范文档、项目骨架、缓存与运行元数据。</div></div>
       <div class="tl-item"><div class="tl-dot done"></div><span class="tl-title">Phase 1 · 主链路与基线</span><span class="tl-state">已完成</span><div class="tl-desc">求解、答案验证、ProcessBench 适配与首个基线。</div></div>
-      <div class="tl-item"><div class="tl-dot now"></div><span class="tl-title">Phase 2 · 核心验证能力</span><span class="tl-state">进行中</span><div class="tl-desc">符号验证、依赖图、可控错误集与初步消融。</div></div>
-      <div class="tl-item"><div class="tl-dot"></div><span class="tl-title">Phase 3 · 正式评测</span><span class="tl-state">待开始</span><div class="tl-desc">冻结配置后跑正式数据、人工抽检与难度分析。</div></div>
-      <div class="tl-item"><div class="tl-dot"></div><span class="tl-title">Phase 4 · 收尾</span><span class="tl-state">待开始</span><div class="tl-desc">应用界面、文档与最终报告。</div></div>
+      <div class="tl-item"><div class="tl-dot done"></div><span class="tl-title">Phase 2 · 核心验证能力</span><span class="tl-state">已完成</span><div class="tl-desc">符号验证、依赖图、可控错误集与 B0/Full 回放。</div></div>
+      <div class="tl-item"><div class="tl-dot done"></div><span class="tl-title">Phase 3 · 正式评测</span><span class="tl-state">已完成</span><div class="tl-desc">三数据集正式表、人工抽检与难度边界。</div></div>
+      <div class="tl-item"><div class="tl-dot now"></div><span class="tl-title">Phase 4 · 收尾</span><span class="tl-state">进行中</span><div class="tl-desc">Streamlit 应用、分析报告与 ≤2 分钟 Demo 脚本。</div></div>
     </div>
   </div>
 </section>
@@ -208,7 +207,7 @@ footer b{color:var(--ink)}
 <footer>
   <div class="wrap">
     <div><b>MathXRay</b> · 数学推理过程验证与最早错误定位</div>
-    <div>本页面为项目方案可视化版，完整方案见 <a href="https://github.com/fish-tooth/MathXRay/blob/main/docs/方案文档.md" target="_blank" rel="noopener">docs/方案文档.md</a>。初步结果为 smoke 样本，不是方案的最终结果。</div>
+    <div>本页面为项目方案可视化版，完整方案见 <a href="方案文档.md">docs/方案文档.md</a>。主结果来自 <a href="../reports/official/processbench_three_datasets.md">reports/official</a>，应用入口为仓库根目录 <code>streamlit run app.py</code>。</div>
   </div>
 </footer>
 

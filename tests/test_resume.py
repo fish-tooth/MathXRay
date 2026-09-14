@@ -64,6 +64,30 @@ def test_resume_skips_completed_and_does_not_recount(tmp_path):
     assert judge2._provider.call_count == 0  # no re-computation
 
 
+def test_resume_reruns_failed_records(tmp_path):
+    samples = [_sample("s0")]
+    raw_path = tmp_path / "raw.jsonl"
+
+    # First run: provider returns an empty response -> parse failure.
+    bad = DirectJudge(MockProvider(default=""), PROMPT, model="mock")
+    r1 = run_baseline(
+        bad, samples, method=METHOD, run_id="run1", run_signature=_sig(), raw_path=raw_path
+    )
+    assert r1.n_new == 1
+    assert r1.records[0]["prediction"]["parse_status"] == "FAILURE"
+
+    # Second run: good provider. The failed record must NOT be treated as
+    # completed, so it is re-judged instead of skipped.
+    good = _judge()
+    r2 = run_baseline(
+        good, samples, method=METHOD, run_id="run2", run_signature=_sig(), raw_path=raw_path
+    )
+    assert r2.n_resumed == 0
+    assert r2.n_new == 1
+    assert r2.records[0]["prediction"]["parse_status"] == "SUCCESS"
+    assert good._provider.call_count == 1
+
+
 def test_signature_change_forces_recompute(tmp_path):
     samples = [_sample("s0")]
     raw_path = tmp_path / "raw.jsonl"

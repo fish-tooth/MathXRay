@@ -1,0 +1,37 @@
+{
+  "n": 300,
+  "B0": {
+    "n_all": 300,
+    "n_gold_error": 198,
+    "n_gold_correct": 102,
+    "error_detection_recall": 0.9595959595959596,
+    "first_error_exact": 0.7474747474747475,
+    "correct_process_accuracy": 0.8725490196078431,
+    "process_status_accuracy": 0.93,
+    "official_composite": 0.79,
+    "plus_minus_one": 0.8484848484848485,
+    "mean_abs_step_distance": 0.43157894736842106,
+    "n_missed_localization": 8,
+    "n_parse_failure": 6,
+    "n_api_failure": 0,
+    "n_pred_missing": 0
+  },
+  "Full": {
+    "n_all": 300,
+    "n_gold_error": 198,
+    "n_gold_correct": 102,
+    "error_detection_recall": 0.9595959595959596,
+    "first_error_exact": 0.7222222222222222,
+    "correct_process_accuracy": 0.8725490196078431,
+    "process_status_accuracy": 0.93,
+    "official_composite": 0.7733333333333333,
+    "plus_minus_one": 0.8181818181818182,
+    "mean_abs_step_distance": 0.5368421052631579,
+    "n_missed_localization": 8,
+    "n_parse_failure": 6,
+    "n_api_failure": 0,
+    "n_pred_missing": 0
+  },
+  "delta_first_error_exact": -0.025252525252525304,
+  "note": "Full replay fuses stored B0 semantic predictions with the local symbolic verifier. No extra Hy3 calls."
+}

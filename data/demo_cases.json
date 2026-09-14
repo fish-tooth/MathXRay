@@ -1,0 +1,101 @@
+{
+  "cases": [
+    {
+      "id": "demo-supported",
+      "title": "过程成立 · 答案正确",
+      "headline": "一条干净的推理链：每一步都支撑最终答案。",
+      "problem": "Chris 的割草机有两种模式。Turtle 模式割完整块草坪要 60 分钟，Rabbit 模式要 40 分钟。他今天一半用 Turtle、一半用 Rabbit。一共用了多少分钟？",
+      "gold_answer": "50",
+      "solution": {
+        "problem": "Chris lawn mower two speeds",
+        "final_answer": "50",
+        "solution_steps": [
+          {"step_id": 1, "statement": "Turtle 模式整块草坪需要 60 分钟。", "expression": "T=60", "depends_on": []},
+          {"step_id": 2, "statement": "一半草坪在 Turtle 模式下需要 30 分钟。", "expression": "60/2=30", "depends_on": [1]},
+          {"step_id": 3, "statement": "Rabbit 模式整块草坪需要 40 分钟。", "expression": "R=40", "depends_on": []},
+          {"step_id": 4, "statement": "一半草坪在 Rabbit 模式下需要 20 分钟。", "expression": "40/2=20", "depends_on": [3]},
+          {"step_id": 5, "statement": "总时间是两部分之和。", "expression": "30+20=50", "depends_on": [2, 4]}
+        ]
+      },
+      "answer_verdict": "EQUIVALENT",
+      "audit": {
+        "process_correct": true,
+        "first_error_step": null,
+        "first_root_error": null,
+        "error_type": null,
+        "reason": "所有可解析等式均成立，语义审查未发现跳步或条件遗漏。",
+        "confidence": "High",
+        "unsupported_answer": false,
+        "steps": [
+          {"step_id": 1, "symbolic": "VALID", "fused": "VALID", "tag": "NONE"},
+          {"step_id": 2, "symbolic": "VALID", "fused": "VALID", "tag": "NONE"},
+          {"step_id": 3, "symbolic": "VALID", "fused": "VALID", "tag": "NONE"},
+          {"step_id": 4, "symbolic": "VALID", "fused": "VALID", "tag": "NONE"},
+          {"step_id": 5, "symbolic": "VALID", "fused": "VALID", "tag": "NONE"}
+        ]
+      }
+    },
+    {
+      "id": "demo-root-error",
+      "title": "定位最早错误 · 计算失误并传播",
+      "headline": "答案错了，不一定是最后一步错了。MathXRay 标出引入错误的那一步。",
+      "problem": "一个长方形长 12、宽 5。先求面积，再求与面积相等的正方形边长的平方（即该面积本身）。面积是多少？",
+      "gold_answer": "60",
+      "solution": {
+        "problem": "rectangle area",
+        "final_answer": "70",
+        "solution_steps": [
+          {"step_id": 1, "statement": "长方形面积等于长乘宽。", "expression": "A=l*w", "depends_on": []},
+          {"step_id": 2, "statement": "代入长和宽。", "expression": "12*5=70", "depends_on": [1]},
+          {"step_id": 3, "statement": "因此面积为 70。", "expression": "A=70", "depends_on": [2]}
+        ]
+      },
+      "answer_verdict": "NOT_EQUIVALENT",
+      "audit": {
+        "process_correct": false,
+        "first_error_step": 2,
+        "first_root_error": 2,
+        "error_type": "ARITHMETIC_ERROR",
+        "reason": "Step 2 声称 12*5=70，符号验证给出差值 10；Step 3 只是沿用了错误结果。",
+        "confidence": "High",
+        "unsupported_answer": false,
+        "steps": [
+          {"step_id": 1, "symbolic": "UNKNOWN", "fused": "VALID", "tag": "NONE", "evidence": ""},
+          {"step_id": 2, "symbolic": "INVALID", "fused": "INVALID", "tag": "ROOT", "evidence": "12*5=70 is false"},
+          {"step_id": 3, "symbolic": "VALID", "fused": "INVALID", "tag": "PROPAGATED", "evidence": "inherits root error"}
+        ]
+      }
+    },
+    {
+      "id": "demo-unsupported",
+      "title": "答案正确 · 过程不成立",
+      "headline": "最终答案对，并不代表推理成立。这是课题要求识别的核心异常。",
+      "problem": "半径为 3 的圆的面积是多少？（用 π 表示）",
+      "gold_answer": "9π",
+      "solution": {
+        "problem": "circle area",
+        "final_answer": "9π",
+        "solution_steps": [
+          {"step_id": 1, "statement": "圆面积公式是周长乘半径。", "expression": "A=2*π*r*r", "depends_on": []},
+          {"step_id": 2, "statement": "代入 r=3，得到 2π·3·3。", "expression": "2*π*3*3=18π", "depends_on": [1]},
+          {"step_id": 3, "statement": "再把结果减半，得到最终答案。", "expression": "18π/2=9π", "depends_on": [2]}
+        ]
+      },
+      "answer_verdict": "EQUIVALENT",
+      "audit": {
+        "process_correct": false,
+        "first_error_step": 1,
+        "first_root_error": 1,
+        "error_type": "CONCEPT_ERROR",
+        "reason": "Step 1 误用周长公式构造面积（概念错误）。后续步骤在错误公式上运算，虽碰巧得到 9π，但不能支撑结论。",
+        "confidence": "High",
+        "unsupported_answer": true,
+        "steps": [
+          {"step_id": 1, "symbolic": "UNKNOWN", "fused": "INVALID", "tag": "ROOT"},
+          {"step_id": 2, "symbolic": "VALID", "fused": "INVALID", "tag": "PROPAGATED"},
+          {"step_id": 3, "symbolic": "VALID", "fused": "INVALID", "tag": "PROPAGATED"}
+        ]
+      }
+    }
+  ]
+}

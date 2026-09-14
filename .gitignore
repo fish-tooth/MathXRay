@@ -32,7 +32,9 @@ htmlcov/
 # --- Project data (raw may be non-redistributable) ---
 data/raw/
 
-# --- Generated results (keep .gitkeep dirs, ignore generated files) ---
+# --- Generated results (keep .gitkeep dirs, ignore generated files in git) ---
+# Do NOT delete local files under results/raw or results/summaries.
+# They are required to recompute reports/official/.
 results/raw/*
 !results/raw/.gitkeep
 results/parsed/*
@@ -40,5 +42,9 @@ results/parsed/*
 results/summaries/*
 !results/summaries/.gitkeep
 
+# --- Demo capture intermediates (keep demo/mathxray.gif) ---
+demo/frames/
+
 # --- Internal assistant memory ---
 .workbuddy/
+.codebuddy/

@@ -1,0 +1,195 @@
+{
+  "n": 244,
+  "metrics": {
+    "n_all": 244,
+    "n_gold_error": 165,
+    "n_gold_correct": 79,
+    "error_detection_recall": 0.9757575757575757,
+    "first_error_exact": 0.7818181818181819,
+    "correct_process_accuracy": 0.8734177215189873,
+    "process_status_accuracy": 0.9426229508196722,
+    "official_composite": 0.8114754098360656,
+    "plus_minus_one": 0.8666666666666667,
+    "mean_abs_step_distance": 0.43478260869565216,
+    "n_missed_localization": 4,
+    "n_parse_failure": 2,
+    "n_api_failure": 0,
+    "n_pred_missing": 0
+  },
+  "per_source": {
+    "gsm8k": {
+      "n_all": 36,
+      "n_gold_error": 19,
+      "n_gold_correct": 17,
+      "error_detection_recall": 1.0,
+      "first_error_exact": 0.8421052631578947,
+      "correct_process_accuracy": 1.0,
+      "process_status_accuracy": 1.0,
+      "official_composite": 0.9166666666666666,
+      "plus_minus_one": 0.8947368421052632,
+      "mean_abs_step_distance": 0.3157894736842105,
+      "n_missed_localization": 0,
+      "n_parse_failure": 0,
+      "n_api_failure": 0,
+      "n_pred_missing": 0
+    },
+    "math": {
+      "n_all": 103,
+      "n_gold_error": 63,
+      "n_gold_correct": 40,
+      "error_detection_recall": 1.0,
+      "first_error_exact": 0.8095238095238095,
+      "correct_process_accuracy": 0.875,
+      "process_status_accuracy": 0.9514563106796117,
+      "official_composite": 0.8349514563106796,
+      "plus_minus_one": 0.8888888888888888,
+      "mean_abs_step_distance": 0.5079365079365079,
+      "n_missed_localization": 0,
+      "n_parse_failure": 0,
+      "n_api_failure": 0,
+      "n_pred_missing": 0
+    },
+    "omnimath": {
+      "n_all": 105,
+      "n_gold_error": 83,
+      "n_gold_correct": 22,
+      "error_detection_recall": 0.9518072289156626,
+      "first_error_exact": 0.7469879518072289,
+      "correct_process_accuracy": 0.7727272727272727,
+      "process_status_accuracy": 0.9142857142857143,
+      "official_composite": 0.7523809523809524,
+      "plus_minus_one": 0.8433734939759037,
+      "mean_abs_step_distance": 0.4050632911392405,
+      "n_missed_localization": 4,
+      "n_parse_failure": 2,
+      "n_api_failure": 0,
+      "n_pred_missing": 0
+    }
+  },
+  "ci": {
+    "error_detection_recall": {
+      "point": 0.9757575757575757,
+      "low": 0.9515151515151515,
+      "high": 0.9939393939393939,
+      "fmt": "0.976 [0.952, 0.994]"
+    },
+    "first_error_exact": {
+      "point": 0.7818181818181819,
+      "low": 0.7151515151515152,
+      "high": 0.8424242424242424,
+      "fmt": "0.782 [0.715, 0.842]"
+    },
+    "correct_process_accuracy": {
+      "point": 0.8734177215189873,
+      "low": 0.7974683544303798,
+      "high": 0.9367088607594937,
+      "fmt": "0.873 [0.797, 0.937]"
+    }
+  },
+  "error_type_distribution": {
+    "ARITHMETIC_ERROR": 24,
+    "PROBLEM_MISREAD": 28,
+    "CONCEPT_ERROR": 53,
+    "CONDITION_OMISSION": 18,
+    "ALGEBRA_ERROR": 22,
+    "LOGIC_GAP": 13,
+    "THEOREM_MISUSE": 8,
+    "CIRCULAR_REASONING": 1,
+    "HALLUCINATION": 4
+  },
+  "unsupported": {
+    "n_supported_correct": 79,
+    "n_unsupported_answer": 37,
+    "n_finalization_fail": 0,
+    "n_ordinary_fail": 128,
+    "unsupported_recall": 0.918918918918919,
+    "flag_rate_on_supported_correct": 0.12658227848101267,
+    "n_flagged_on_supported_correct": 10
+  },
+  "difficulty": [
+    {
+      "source": "gsm8k",
+      "difficulty": "D1",
+      "metrics": {
+        "n_all": 36,
+        "n_gold_error": 19,
+        "n_gold_correct": 17,
+        "error_detection_recall": 1.0,
+        "first_error_exact": 0.8421052631578947,
+        "correct_process_accuracy": 1.0,
+        "process_status_accuracy": 1.0,
+        "official_composite": 0.9166666666666666,
+        "plus_minus_one": 0.8947368421052632,
+        "mean_abs_step_distance": 0.3157894736842105,
+        "n_missed_localization": 0,
+        "n_parse_failure": 0,
+        "n_api_failure": 0,
+        "n_pred_missing": 0
+      }
+    },
+    {
+      "source": "math",
+      "difficulty": "D3",
+      "metrics": {
+        "n_all": 103,
+        "n_gold_error": 63,
+        "n_gold_correct": 40,
+        "error_detection_recall": 1.0,
+        "first_error_exact": 0.8095238095238095,
+        "correct_process_accuracy": 0.875,
+        "process_status_accuracy": 0.9514563106796117,
+        "official_composite": 0.8349514563106796,
+        "plus_minus_one": 0.8888888888888888,
+        "mean_abs_step_distance": 0.5079365079365079,
+        "n_missed_localization": 0,
+        "n_parse_failure": 0,
+        "n_api_failure": 0,
+        "n_pred_missing": 0
+      }
+    },
+    {
+      "source": "omnimath",
+      "difficulty": "D5",
+      "metrics": {
+        "n_all": 105,
+        "n_gold_error": 83,
+        "n_gold_correct": 22,
+        "error_detection_recall": 0.9518072289156626,
+        "first_error_exact": 0.7469879518072289,
+        "correct_process_accuracy": 0.7727272727272727,
+        "process_status_accuracy": 0.9142857142857143,
+        "official_composite": 0.7523809523809524,
+        "plus_minus_one": 0.8433734939759037,
+        "mean_abs_step_distance": 0.4050632911392405,
+        "n_missed_localization": 4,
+        "n_parse_failure": 2,
+        "n_api_failure": 0,
+        "n_pred_missing": 0
+      }
+    }
+  ],
+  "capability_boundary": {
+    "from": "math",
+    "to": "omnimath",
+    "from_difficulty": "D3",
+    "to_difficulty": "D5",
+    "from_value": 0.8095238095238095,
+    "to_value": 0.7469879518072289,
+    "drop": 0.06253585771658066
+  },
+  "error_type_labels": {
+    "PROBLEM_MISREAD": "题意误读",
+    "CONDITION_OMISSION": "条件遗漏",
+    "CONCEPT_ERROR": "概念错误",
+    "THEOREM_MISUSE": "定理误用",
+    "LOGIC_GAP": "逻辑跳步",
+    "CIRCULAR_REASONING": "循环论证",
+    "ALGEBRA_ERROR": "代数变形错误",
+    "ARITHMETIC_ERROR": "计算错误",
+    "HALLUCINATION": "幻觉/无中生有",
+    "ANSWER_FORMAT_ERROR": "答案格式错误",
+    "OTHER": "其他",
+    "UNKNOWN": "无法可靠分类"
+  },
+  "note": "Official three-dataset slice: GSM8K (D1), MATH (D3), Omni-MATH (D5). OlympiadBench is reported separately as an extra high-difficulty split."
+}

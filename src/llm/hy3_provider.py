@@ -27,6 +27,7 @@ class Hy3Provider(BaseLLMProvider):
         timeout: float = 120.0,
         max_retries: int = 3,
         retry_backoff_base: float = 2.0,
+        empty_content_fallback_effort: str | None = None,
         client: Any = None,
     ) -> None:
         if not api_key:
@@ -35,23 +36,22 @@ class Hy3Provider(BaseLLMProvider):
         self._timeout = timeout
         self._max_retries = max_retries
         self._backoff_base = retry_backoff_base
+        self._empty_content_fallback_effort = empty_content_fallback_effort
         # max_retries=0 disables the SDK's own retry so our backoff owns retries.
         self._client = client or OpenAI(
             api_key=api_key, base_url=base_url, timeout=timeout, max_retries=0
         )
 
-    def complete(self, messages: list[dict[str, str]], **gen_cfg: Any) -> ProviderResult:
-        cfg = dict(gen_cfg)
-        temperature = cfg.pop("temperature", 0.0)
-        max_tokens = cfg.pop("max_tokens", 4096)
-        extra_body: dict[str, Any] = {}
-        if "reasoning_effort" in cfg:
-            extra_body["reasoning_effort"] = cfg.pop("reasoning_effort")
-
-        start = time.perf_counter()
+    def _attempt(
+        self,
+        messages: list[dict[str, str]],
+        temperature: float,
+        max_tokens: int,
+        extra_body: dict[str, Any],
+    ) -> tuple[str, str | None, dict[str, Any], str | None, int]:
+        """One full try/backoff cycle. Returns (content, reasoning, usage, error, attempts)."""
         last_error: str | None = None
         attempts = 0
-
         for attempt in range(self._max_retries + 1):
             attempts = attempt
             try:
@@ -64,7 +64,6 @@ class Hy3Provider(BaseLLMProvider):
                 if extra_body:
                     kwargs["extra_body"] = extra_body
                 resp = self._client.chat.completions.create(**kwargs)
-                latency_ms = (time.perf_counter() - start) * 1000.0
                 message = resp.choices[0].message
                 content = message.content or ""
                 # Hy3 exposes the hidden chain-of-thought via reasoning_content;
@@ -77,26 +76,54 @@ class Hy3Provider(BaseLLMProvider):
                         "completion_tokens": resp.usage.completion_tokens,
                         "total_tokens": resp.usage.total_tokens,
                     }
-                return ProviderResult(
-                    raw=content,
-                    reasoning=reasoning,
-                    latency_ms=latency_ms,
-                    retry_count=attempt,
-                    model=self.model,
-                    usage=usage,
-                )
+                return content, reasoning, usage, None, attempts
             except Exception as exc:  # noqa: BLE001 - record and retry any transport error
                 last_error = f"{type(exc).__name__}: {exc}"
                 if attempt >= self._max_retries:
                     break
                 delay = self._backoff_base**attempt + random.uniform(0, 0.5)
                 time.sleep(delay)
+        return "", None, {}, last_error, attempts
+
+    def complete(self, messages: list[dict[str, str]], **gen_cfg: Any) -> ProviderResult:
+        cfg = dict(gen_cfg)
+        temperature = cfg.pop("temperature", 0.0)
+        max_tokens = cfg.pop("max_tokens", 4096)
+        extra_body: dict[str, Any] = {}
+        if "reasoning_effort" in cfg:
+            extra_body["reasoning_effort"] = cfg.pop("reasoning_effort")
+
+        start = time.perf_counter()
+        content, reasoning, usage, error, attempts = self._attempt(
+            messages, temperature, max_tokens, extra_body
+        )
+
+        # Deep-thinking models can spend the whole budget on reasoning_content and
+        # return an empty content. When that happens, retry once with a lower
+        # reasoning effort to elicit the structured final answer. The fallback is
+        # marked in usage so the trace records what actually happened.
+        fallback = self._empty_content_fallback_effort
+        if error is None and not content and reasoning and fallback:
+            fb_extra = dict(extra_body)
+            fb_extra["reasoning_effort"] = fallback
+            fb_content, fb_reasoning, fb_usage, fb_error, fb_attempts = self._attempt(
+                messages, temperature, max_tokens, fb_extra
+            )
+            # +1 accounts for the extra fallback call itself; fb_attempts covers
+            # any transport retries inside the fallback cycle.
+            attempts += 1 + fb_attempts
+            usage = {**usage, "empty_content_fallback": fallback}
+            if fb_error is None and fb_content:
+                content, reasoning, usage = fb_content, fb_reasoning, fb_usage
+                usage["empty_content_fallback"] = fallback
 
         latency_ms = (time.perf_counter() - start) * 1000.0
         return ProviderResult(
-            raw=None,
+            raw=content if error is None else None,
+            reasoning=reasoning,
             latency_ms=latency_ms,
             retry_count=attempts,
-            error=last_error,
+            error=error,
             model=self.model,
+            usage=usage,
         )

@@ -115,6 +115,85 @@ def test_hy3_provider_error_propagation(monkeypatch):
     assert result.retry_count == 1
 
 
+class _FakeReasoningMsg:
+    def __init__(self, content: str, reasoning: str | None) -> None:
+        self.content = content
+        self.reasoning_content = reasoning
+
+
+class _FakeReasoningChoice:
+    def __init__(self, content: str, reasoning: str | None) -> None:
+        self.message = _FakeReasoningMsg(content, reasoning)
+
+
+class _FakeReasoningResp:
+    def __init__(self, content: str, reasoning: str | None) -> None:
+        self.choices = [_FakeReasoningChoice(content, reasoning)]
+        self.usage = _FakeUsage()
+
+
+class _EmptyThenAnswerCompletions:
+    def __init__(self) -> None:
+        self.calls = 0
+        self.efforts: list[str | None] = []
+
+    def create(self, **kwargs):
+        self.calls += 1
+        self.efforts.append((kwargs.get("extra_body") or {}).get("reasoning_effort"))
+        if self.calls == 1:
+            # Deep-thinking mode: content empty, reasoning long.
+            return _FakeReasoningResp("", "long hidden chain of thought")
+        return _FakeReasoningResp(
+            '{"process_correct": true, "first_error_step": null, "reason": "ok"}', "more"
+        )
+
+
+class _EmptyThenAnswerClient:
+    def __init__(self) -> None:
+        self.completions = _EmptyThenAnswerCompletions()
+        self.chat = self
+
+
+def test_hy3_provider_empty_content_fallback(monkeypatch):
+    fake = _EmptyThenAnswerClient()
+    provider = Hy3Provider(
+        api_key="k",
+        model="m",
+        max_retries=0,
+        retry_backoff_base=1.0,
+        empty_content_fallback_effort="low",
+        client=fake,
+    )
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    result = provider.complete(
+        [{"role": "user", "content": "hi"}], reasoning_effort="high"
+    )
+    assert result.ok
+    assert '"process_correct": true' in (result.raw or "")
+    assert result.retry_count == 1  # first attempt + one fallback attempt
+    assert result.usage["empty_content_fallback"] == "low"
+    assert fake.completions.calls == 2
+    assert fake.completions.efforts == ["high", "low"]
+
+
+def test_hy3_provider_no_fallback_when_disabled(monkeypatch):
+    fake = _EmptyThenAnswerClient()
+    provider = Hy3Provider(
+        api_key="k",
+        model="m",
+        max_retries=0,
+        retry_backoff_base=1.0,
+        client=fake,  # fallback not enabled
+    )
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    result = provider.complete(
+        [{"role": "user", "content": "hi"}], reasoning_effort="high"
+    )
+    assert result.ok  # empty content is still a successful call
+    assert result.raw == ""
+    assert fake.completions.calls == 1
+
+
 def test_hy3_provider_passes_generation_config(monkeypatch):
     captured: dict = {}
 

@@ -1,0 +1,17 @@
+sample_id,source,gold_final_answer_correct,gold_process_correct,evaluator_flags_process_issue,human_label,human_first_error,human_error_type,notes,reviewer,seed
+math-558,math,True,True,True,FALSE_POSITIVE,3,CONCEPT_ERROR,Judge over-flagged cylindrical-to-rectangular trig interval; gold process is correct.,r1,42
+math-944,math,True,True,True,FALSE_POSITIVE,1,CONCEPT_ERROR,Factoring of 3a^2+19a+30 is possible; judge false alarm.,r1,42
+math-882,math,True,True,True,FALSE_POSITIVE,4,LOGIC_GAP,Self-correction in ordering was treated as invalid logic.,r1,42
+math-988,math,True,True,True,FALSE_POSITIVE,3,CONCEPT_ERROR,Conjugate discussion nitpick; gold process correct.,r1,42
+math-786,math,True,True,True,FALSE_POSITIVE,1,THEOREM_MISUSE,Conjugate-root wording was overly strict.,r1,42
+olympiadbench-897,olympiadbench,True,True,True,FALSE_POSITIVE,4,ARITHMETIC_ERROR,Arithmetic check on 6084^2 appears to be a judge hallucination vs gold.,r1,42
+olympiadbench-936,olympiadbench,True,True,True,UNCERTAIN,7,LOGIC_GAP,Minimality proof may be incomplete; gold says correct. Keep uncertain.,r1,42
+olympiadbench-610,olympiadbench,True,True,True,FALSE_POSITIVE,1,PROBLEM_MISREAD,AP endpoint assumption is a style issue not a true error.,r1,42
+olympiadbench-541,olympiadbench,True,True,True,FALSE_POSITIVE,1,THEOREM_MISUSE,Log vs power-rule citation mix-up; algebra still valid.,r1,42
+omnimath-640,omnimath,True,True,True,FALSE_POSITIVE,4,HALLUCINATION,Divisor-list nitpick vs gold-correct chain.,r1,42
+omnimath-940,omnimath,True,True,True,REAL_PROCESS_ERROR,9,LOGIC_GAP,Final functional form asserted without derivation; treat as real gap even if gold says correct.,r1,42
+omnimath-835,omnimath,True,True,True,FALSE_POSITIVE,4,CONCEPT_ERROR,Rotation mapping dispute; gold process correct.,r1,42
+omnimath-562,omnimath,True,True,True,FALSE_POSITIVE,2,CONCEPT_ERROR,Triangle naming dispute; gold process correct.,r1,42
+omnimath-730,omnimath,True,True,True,FALSE_POSITIVE,2,CONCEPT_ERROR,Greedy product argument; gold process correct.,r1,42
+omnimath-780,omnimath,True,False,False,REAL_PROCESS_ERROR,3,LOGIC_GAP,MISS: judge accepted an invalid homogeneous-polynomial argument.,r1,42
+omnimath-543,omnimath,True,False,False,REAL_PROCESS_ERROR,1,CONCEPT_ERROR,MISS: digit-block factorization argument is not valid; judge missed it.,r1,42

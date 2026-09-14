@@ -1,0 +1,24 @@
+{
+  "run_id": "Full-20260914T040414Z-147ee3b2",
+  "method": "Full",
+  "n": 80,
+  "metrics": {
+    "n_all": 80,
+    "n_gold_error": 80,
+    "n_gold_correct": 0,
+    "error_detection_recall": 0.3875,
+    "first_error_exact": 0.1375,
+    "correct_process_accuracy": null,
+    "process_status_accuracy": 0.3875,
+    "official_composite": 0.1375,
+    "plus_minus_one": 0.175,
+    "mean_abs_step_distance": 2.0,
+    "n_missed_localization": 49,
+    "n_parse_failure": 0,
+    "n_api_failure": 0,
+    "n_pred_missing": 0
+  },
+  "error_type_macro_f1": 0.12444444444444443,
+  "unsupported_recall": 0.42857142857142855,
+  "n_answer_preserving": 21
+}

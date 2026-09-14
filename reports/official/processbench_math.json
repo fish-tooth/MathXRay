@@ -1,0 +1,112 @@
+{
+  "n": 103,
+  "metrics": {
+    "n_all": 103,
+    "n_gold_error": 63,
+    "n_gold_correct": 40,
+    "error_detection_recall": 1.0,
+    "first_error_exact": 0.8095238095238095,
+    "correct_process_accuracy": 0.875,
+    "process_status_accuracy": 0.9514563106796117,
+    "official_composite": 0.8349514563106796,
+    "plus_minus_one": 0.8888888888888888,
+    "mean_abs_step_distance": 0.5079365079365079,
+    "n_missed_localization": 0,
+    "n_parse_failure": 0,
+    "n_api_failure": 0,
+    "n_pred_missing": 0
+  },
+  "per_source": {
+    "math": {
+      "n_all": 103,
+      "n_gold_error": 63,
+      "n_gold_correct": 40,
+      "error_detection_recall": 1.0,
+      "first_error_exact": 0.8095238095238095,
+      "correct_process_accuracy": 0.875,
+      "process_status_accuracy": 0.9514563106796117,
+      "official_composite": 0.8349514563106796,
+      "plus_minus_one": 0.8888888888888888,
+      "mean_abs_step_distance": 0.5079365079365079,
+      "n_missed_localization": 0,
+      "n_parse_failure": 0,
+      "n_api_failure": 0,
+      "n_pred_missing": 0
+    }
+  },
+  "ci": {
+    "error_detection_recall": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "fmt": "1.000 [1.000, 1.000]"
+    },
+    "first_error_exact": {
+      "point": 0.8095238095238095,
+      "low": 0.7142857142857143,
+      "high": 0.9047619047619048,
+      "fmt": "0.810 [0.714, 0.905]"
+    },
+    "correct_process_accuracy": {
+      "point": 0.875,
+      "low": 0.775,
+      "high": 0.975,
+      "fmt": "0.875 [0.775, 0.975]"
+    }
+  },
+  "error_type_distribution": {
+    "ARITHMETIC_ERROR": 13,
+    "PROBLEM_MISREAD": 8,
+    "ALGEBRA_ERROR": 17,
+    "CONCEPT_ERROR": 15,
+    "LOGIC_GAP": 3,
+    "THEOREM_MISUSE": 6,
+    "CONDITION_OMISSION": 6
+  },
+  "unsupported": {
+    "n_supported_correct": 40,
+    "n_unsupported_answer": 10,
+    "n_finalization_fail": 0,
+    "n_ordinary_fail": 53,
+    "unsupported_recall": 1.0,
+    "flag_rate_on_supported_correct": 0.125,
+    "n_flagged_on_supported_correct": 5
+  },
+  "difficulty": [
+    {
+      "source": "math",
+      "difficulty": "D3",
+      "metrics": {
+        "n_all": 103,
+        "n_gold_error": 63,
+        "n_gold_correct": 40,
+        "error_detection_recall": 1.0,
+        "first_error_exact": 0.8095238095238095,
+        "correct_process_accuracy": 0.875,
+        "process_status_accuracy": 0.9514563106796117,
+        "official_composite": 0.8349514563106796,
+        "plus_minus_one": 0.8888888888888888,
+        "mean_abs_step_distance": 0.5079365079365079,
+        "n_missed_localization": 0,
+        "n_parse_failure": 0,
+        "n_api_failure": 0,
+        "n_pred_missing": 0
+      }
+    }
+  ],
+  "capability_boundary": {},
+  "error_type_labels": {
+    "PROBLEM_MISREAD": "题意误读",
+    "CONDITION_OMISSION": "条件遗漏",
+    "CONCEPT_ERROR": "概念错误",
+    "THEOREM_MISUSE": "定理误用",
+    "LOGIC_GAP": "逻辑跳步",
+    "CIRCULAR_REASONING": "循环论证",
+    "ALGEBRA_ERROR": "代数变形错误",
+    "ARITHMETIC_ERROR": "计算错误",
+    "HALLUCINATION": "幻觉/无中生有",
+    "ANSWER_FORMAT_ERROR": "答案格式错误",
+    "OTHER": "其他",
+    "UNKNOWN": "无法可靠分类"
+  }
+}

@@ -91,6 +91,9 @@ def _build_provider(config: Config, provider_name: str):
         timeout=float(config.generation.get("timeout_seconds", 120)),
         max_retries=int(config.generation.get("max_retries", 3)),
         retry_backoff_base=float(config.generation.get("retry_backoff_base", 2.0)),
+        # Deep-thinking runs can return an empty content; retry once at a lower
+        # effort to recover the structured answer (see Hy3Provider).
+        empty_content_fallback_effort="low",
     )
 
 

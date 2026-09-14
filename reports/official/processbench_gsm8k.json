@@ -1,0 +1,110 @@
+{
+  "n": 36,
+  "metrics": {
+    "n_all": 36,
+    "n_gold_error": 19,
+    "n_gold_correct": 17,
+    "error_detection_recall": 1.0,
+    "first_error_exact": 0.8421052631578947,
+    "correct_process_accuracy": 1.0,
+    "process_status_accuracy": 1.0,
+    "official_composite": 0.9166666666666666,
+    "plus_minus_one": 0.8947368421052632,
+    "mean_abs_step_distance": 0.3157894736842105,
+    "n_missed_localization": 0,
+    "n_parse_failure": 0,
+    "n_api_failure": 0,
+    "n_pred_missing": 0
+  },
+  "per_source": {
+    "gsm8k": {
+      "n_all": 36,
+      "n_gold_error": 19,
+      "n_gold_correct": 17,
+      "error_detection_recall": 1.0,
+      "first_error_exact": 0.8421052631578947,
+      "correct_process_accuracy": 1.0,
+      "process_status_accuracy": 1.0,
+      "official_composite": 0.9166666666666666,
+      "plus_minus_one": 0.8947368421052632,
+      "mean_abs_step_distance": 0.3157894736842105,
+      "n_missed_localization": 0,
+      "n_parse_failure": 0,
+      "n_api_failure": 0,
+      "n_pred_missing": 0
+    }
+  },
+  "ci": {
+    "error_detection_recall": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "fmt": "1.000 [1.000, 1.000]"
+    },
+    "first_error_exact": {
+      "point": 0.8421052631578947,
+      "low": 0.6842105263157895,
+      "high": 1.0,
+      "fmt": "0.842 [0.684, 1.000]"
+    },
+    "correct_process_accuracy": {
+      "point": 1.0,
+      "low": 1.0,
+      "high": 1.0,
+      "fmt": "1.000 [1.000, 1.000]"
+    }
+  },
+  "error_type_distribution": {
+    "PROBLEM_MISREAD": 8,
+    "CONCEPT_ERROR": 1,
+    "CONDITION_OMISSION": 6,
+    "LOGIC_GAP": 2,
+    "ARITHMETIC_ERROR": 2
+  },
+  "unsupported": {
+    "n_supported_correct": 17,
+    "n_unsupported_answer": 0,
+    "n_finalization_fail": 0,
+    "n_ordinary_fail": 19,
+    "unsupported_recall": null,
+    "flag_rate_on_supported_correct": 0.0,
+    "n_flagged_on_supported_correct": 0
+  },
+  "difficulty": [
+    {
+      "source": "gsm8k",
+      "difficulty": "D1",
+      "metrics": {
+        "n_all": 36,
+        "n_gold_error": 19,
+        "n_gold_correct": 17,
+        "error_detection_recall": 1.0,
+        "first_error_exact": 0.8421052631578947,
+        "correct_process_accuracy": 1.0,
+        "process_status_accuracy": 1.0,
+        "official_composite": 0.9166666666666666,
+        "plus_minus_one": 0.8947368421052632,
+        "mean_abs_step_distance": 0.3157894736842105,
+        "n_missed_localization": 0,
+        "n_parse_failure": 0,
+        "n_api_failure": 0,
+        "n_pred_missing": 0
+      }
+    }
+  ],
+  "capability_boundary": {},
+  "error_type_labels": {
+    "PROBLEM_MISREAD": "题意误读",
+    "CONDITION_OMISSION": "条件遗漏",
+    "CONCEPT_ERROR": "概念错误",
+    "THEOREM_MISUSE": "定理误用",
+    "LOGIC_GAP": "逻辑跳步",
+    "CIRCULAR_REASONING": "循环论证",
+    "ALGEBRA_ERROR": "代数变形错误",
+    "ARITHMETIC_ERROR": "计算错误",
+    "HALLUCINATION": "幻觉/无中生有",
+    "ANSWER_FORMAT_ERROR": "答案格式错误",
+    "OTHER": "其他",
+    "UNKNOWN": "无法可靠分类"
+  }
+}

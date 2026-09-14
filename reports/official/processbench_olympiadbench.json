@@ -1,0 +1,113 @@
+{
+  "n": 105,
+  "metrics": {
+    "n_all": 105,
+    "n_gold_error": 67,
+    "n_gold_correct": 38,
+    "error_detection_recall": 0.9104477611940298,
+    "first_error_exact": 0.6865671641791045,
+    "correct_process_accuracy": 0.8947368421052632,
+    "process_status_accuracy": 0.9047619047619048,
+    "official_composite": 0.7619047619047619,
+    "plus_minus_one": 0.7910447761194029,
+    "mean_abs_step_distance": 0.47540983606557374,
+    "n_missed_localization": 6,
+    "n_parse_failure": 6,
+    "n_api_failure": 0,
+    "n_pred_missing": 0
+  },
+  "per_source": {
+    "olympiadbench": {
+      "n_all": 105,
+      "n_gold_error": 67,
+      "n_gold_correct": 38,
+      "error_detection_recall": 0.9104477611940298,
+      "first_error_exact": 0.6865671641791045,
+      "correct_process_accuracy": 0.8947368421052632,
+      "process_status_accuracy": 0.9047619047619048,
+      "official_composite": 0.7619047619047619,
+      "plus_minus_one": 0.7910447761194029,
+      "mean_abs_step_distance": 0.47540983606557374,
+      "n_missed_localization": 6,
+      "n_parse_failure": 6,
+      "n_api_failure": 0,
+      "n_pred_missing": 0
+    }
+  },
+  "ci": {
+    "error_detection_recall": {
+      "point": 0.9104477611940298,
+      "low": 0.835820895522388,
+      "high": 0.9701492537313433,
+      "fmt": "0.910 [0.836, 0.970]"
+    },
+    "first_error_exact": {
+      "point": 0.6865671641791045,
+      "low": 0.5671641791044776,
+      "high": 0.7910447761194029,
+      "fmt": "0.687 [0.567, 0.791]"
+    },
+    "correct_process_accuracy": {
+      "point": 0.8947368421052632,
+      "low": 0.7894736842105263,
+      "high": 0.9736842105263158,
+      "fmt": "0.895 [0.789, 0.974]"
+    }
+  },
+  "error_type_distribution": {
+    "PROBLEM_MISREAD": 8,
+    "HALLUCINATION": 2,
+    "CONDITION_OMISSION": 10,
+    "LOGIC_GAP": 6,
+    "ARITHMETIC_ERROR": 7,
+    "ALGEBRA_ERROR": 11,
+    "CONCEPT_ERROR": 17,
+    "THEOREM_MISUSE": 4
+  },
+  "unsupported": {
+    "n_supported_correct": 38,
+    "n_unsupported_answer": 18,
+    "n_finalization_fail": 0,
+    "n_ordinary_fail": 49,
+    "unsupported_recall": 0.8888888888888888,
+    "flag_rate_on_supported_correct": 0.10526315789473684,
+    "n_flagged_on_supported_correct": 4
+  },
+  "difficulty": [
+    {
+      "source": "olympiadbench",
+      "difficulty": "D4",
+      "metrics": {
+        "n_all": 105,
+        "n_gold_error": 67,
+        "n_gold_correct": 38,
+        "error_detection_recall": 0.9104477611940298,
+        "first_error_exact": 0.6865671641791045,
+        "correct_process_accuracy": 0.8947368421052632,
+        "process_status_accuracy": 0.9047619047619048,
+        "official_composite": 0.7619047619047619,
+        "plus_minus_one": 0.7910447761194029,
+        "mean_abs_step_distance": 0.47540983606557374,
+        "n_missed_localization": 6,
+        "n_parse_failure": 6,
+        "n_api_failure": 0,
+        "n_pred_missing": 0
+      }
+    }
+  ],
+  "capability_boundary": {},
+  "error_type_labels": {
+    "PROBLEM_MISREAD": "题意误读",
+    "CONDITION_OMISSION": "条件遗漏",
+    "CONCEPT_ERROR": "概念错误",
+    "THEOREM_MISUSE": "定理误用",
+    "LOGIC_GAP": "逻辑跳步",
+    "CIRCULAR_REASONING": "循环论证",
+    "ALGEBRA_ERROR": "代数变形错误",
+    "ARITHMETIC_ERROR": "计算错误",
+    "HALLUCINATION": "幻觉/无中生有",
+    "ANSWER_FORMAT_ERROR": "答案格式错误",
+    "OTHER": "其他",
+    "UNKNOWN": "无法可靠分类"
+  }
+}

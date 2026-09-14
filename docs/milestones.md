@@ -387,7 +387,7 @@ R11、EXT-02
 
 ## 输出
 
-`reports/baseline_diagnosis.md`
+`reports/baseline_diagnosis.md`、`reports/manual_audit.csv`、`reports/official/`
 
 ## 退出标准
 

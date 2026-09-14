@@ -100,7 +100,9 @@ def run_baseline(
     """Run the judge over samples, appending raw records and skipping resumed ones.
 
     ``resume=True`` (default) reads any existing raw file and skips samples whose
-    ``(sample_id, method, run_signature)`` is already present. New predictions are
+    ``(sample_id, method, run_signature)`` already has a *successful* prediction.
+    Failed/empty records (parse or API failures) are not counted as completed, so
+    re-running retries them instead of burning nothing. New predictions are
     appended to the raw file immediately so an interrupted run can be resumed.
     """
     raw_path = Path(raw_path)
@@ -118,7 +120,10 @@ def run_baseline(
                     rec = json.loads(line)
                 except json.JSONDecodeError:
                     continue
-                if rec.get("method") == method and rec.get("run_signature") == run_signature:
+                if rec.get("method") != method or rec.get("run_signature") != run_signature:
+                    continue
+                pred = rec.get("prediction") or {}
+                if pred.get("parse_status") == "SUCCESS" and pred.get("error") is None:
                     completed.add(rec["sample_id"])
                     existing.append(rec)
 

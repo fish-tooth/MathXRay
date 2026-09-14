@@ -17,6 +17,13 @@ def _clear_env(monkeypatch) -> None:
         monkeypatch.delenv(var, raising=False)
 
 
+@pytest.fixture(autouse=True)
+def _isolate_dotenv(monkeypatch) -> None:
+    """Keep the real local .env out of tests: load_config must only see the
+    environment variables that tests set explicitly."""
+    monkeypatch.setattr("src.config.load_dotenv", lambda *a, **k: None)
+
+
 def test_load_defaults(tmp_path, monkeypatch):
     _clear_env(monkeypatch)
     path = _write_yaml(
