@@ -73,10 +73,10 @@ APP_PAGES = [
     ("/?embed=true&page=dashboard", "评测看板", None, "评测看板"),
 ]
 
-DURATIONS_MS = [2400] * len(STORY_NEEDLES) + [3200, 3400, 3400, 3000]
-for i in (14, 15, 16, 20, 21, 22):
+DURATIONS_MS = [6000] * len(STORY_NEEDLES) + [8000, 8000, 8000, 7000]
+for i in (1, 2, 5, 11, 12, 17, 18, 19, 20, 21, 22, 23):
     if i < len(STORY_NEEDLES):
-        DURATIONS_MS[i] = 3200
+        DURATIONS_MS[i] = 7500
 
 
 def _driver(width: int, height: int, dpr: float) -> webdriver.Chrome:
@@ -154,18 +154,15 @@ def capture(base: str, width: int, height: int, dpr: float) -> list[Path]:
     return paths
 
 
-def _normalize(path: Path, size: tuple[int, int]) -> Image.Image:
-    im = Image.open(path).convert("RGB")
-    w, h = size
-    if im.size != size:
-        im = im.resize(size, Image.Resampling.LANCZOS)
-    im.save(path, format="PNG", optimize=True)
-    return im
+def _resize(im: Image.Image, size: tuple[int, int]) -> Image.Image:
+    if im.size == size:
+        return im
+    return im.resize(size, Image.Resampling.LANCZOS)
 
 
 def compose_gif(frame_paths: list[Path], width: int, height: int) -> Path:
-    images = [_normalize(p, (width, height)) for p in frame_paths]
-    palette_src = images[0].quantize(colors=256, method=Image.Quantize.MAXCOVERAGE)
+    images = [_resize(Image.open(p).convert("RGB"), (width, height)) for p in frame_paths]
+    palette_src = images[0].quantize(colors=128, method=Image.Quantize.MAXCOVERAGE)
     paletted = [
         im.quantize(palette=palette_src, dither=Image.Dither.NONE) for im in images
     ]
@@ -176,10 +173,21 @@ def compose_gif(frame_paths: list[Path], width: int, height: int) -> Path:
         append_images=paletted[1:],
         duration=DURATIONS_MS[: len(paletted)],
         loop=0,
-        optimize=False,
+        optimize=True,
         disposal=2,
     )
     return GIF_PATH
+
+
+def listed_frames() -> list[Path]:
+    paths = [FRAMES / f"{i:02d}_story.png" for i in range(len(STORY_NEEDLES))]
+    paths.extend(
+        FRAMES / f"{len(STORY_NEEDLES) + j:02d}_app.png" for j in range(len(APP_PAGES))
+    )
+    missing = [p.name for p in paths if not p.exists()]
+    if missing:
+        raise SystemExit("缺少帧文件：" + ", ".join(missing))
+    return paths
 
 
 def write_manifest(frame_paths: list[Path]) -> None:
@@ -204,10 +212,19 @@ def main() -> None:
     parser.add_argument("--width", type=int, default=1920)
     parser.add_argument("--height", type=int, default=1080)
     parser.add_argument("--dpr", type=float, default=2.0)
+    parser.add_argument("--gif-width", type=int, default=960)
+    parser.add_argument("--gif-height", type=int, default=540)
+    parser.add_argument(
+        "--from-frames",
+        action="store_true",
+        help="用已有 PNG 重打包 GIF，不再截屏",
+    )
     args = parser.parse_args()
-    frames = capture(args.base.rstrip("/"), args.width, args.height, args.dpr)
+    frames = listed_frames() if args.from_frames else capture(
+        args.base.rstrip("/"), args.width, args.height, args.dpr
+    )
     write_manifest(frames)
-    out = compose_gif(frames, args.width, args.height)
+    out = compose_gif(frames, args.gif_width, args.gif_height)
     print(f"frames={len(frames)} gif={out} size={out.stat().st_size} player={PLAYER_PATH}")
 
 
