@@ -2,7 +2,14 @@
 
 from __future__ import annotations
 
-from src.evaluator.symbolic import INVALID, UNKNOWN, VALID, verify_equality, verify_step, verify_steps
+from src.evaluator.symbolic import (
+    INVALID,
+    UNKNOWN,
+    VALID,
+    verify_equality,
+    verify_step,
+    verify_steps,
+)
 
 
 def test_valid_arithmetic_equality():

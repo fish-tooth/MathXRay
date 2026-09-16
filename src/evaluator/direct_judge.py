@@ -12,7 +12,7 @@ Parse failures are recorded explicitly and never silently dropped (protocol P-05
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Any
 
 from src.benchmark.processbench_adapter import CanonicalSample
@@ -51,6 +51,7 @@ class JudgePrediction:
     latency_ms: float | None = None
     retry_count: int = 0
     model: str = ""
+    extra: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -85,8 +86,12 @@ def _extract_json(text: str) -> Any:
     raise ValueError("no valid JSON object found in response")
 
 
+def extract_json_object(text: str) -> Any:
+    """Best-effort JSON object extraction from a model response."""
+    return _extract_json(text)
+
+
 def parse_judge_raw(raw: str) -> ParseJudgeResult:
-    """Parse a Direct-Judge raw response into a validated prediction."""
     if not raw or not raw.strip():
         return ParseJudgeResult(status="FAILURE", error="empty response")
 

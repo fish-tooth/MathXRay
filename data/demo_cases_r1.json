@@ -1,0 +1,312 @@
+{
+  "method": "R1-ReflectiveCritic",
+  "cases": [
+    {
+      "id": "r1-supported",
+      "title": "过程成立 · 答案正确",
+      "headline": "独立求解得到 50，与学生一致。五段都成立，不对质。",
+      "problem": "Chris 的割草机有两种模式。Turtle 模式割完整块草坪要 60 分钟，Rabbit 模式要 40 分钟。他今天一半用 Turtle、一半用 Rabbit。一共用了多少分钟？",
+      "gold_answer": "50",
+      "steps": [
+        "Turtle 模式割完整块草坪需要 60 分钟。",
+        "一半草坪在 Turtle 模式下需要 60/2 = 30 分钟。",
+        "Rabbit 模式割完整块草坪需要 40 分钟。",
+        "一半草坪在 Rabbit 模式下需要 40/2 = 20 分钟。",
+        "总时间为 30 + 20 = 50 分钟。"
+      ],
+      "student_answer": "50",
+      "answer_verdict": "EQUIVALENT",
+      "unsupported_answer": false,
+      "audit": {
+        "sample_id": "r1-supported",
+        "process_correct": true,
+        "first_error_step": null,
+        "error_type": null,
+        "reason": "每一步都有题设支撑，无跳步或条件遗漏。",
+        "raw": "{\"steps\": [{\"step_id\": 1, \"verdict\": \"VALID\", \"claim\": \"题设给出整块 60 分钟。\"}, {\"step_id\": 2, \"verdict\": \"VALID\", \"claim\": \"60/2 = 30 正确。\"}, {\"step_id\": 3, \"verdict\": \"VALID\", \"claim\": \"题设给出整块 40 分钟。\"}, {\"step_id\": 4, \"verdict\": \"VALID\", \"claim\": \"40/2 = 20 正确。\"}, {\"step_id\": 5, \"verdict\": \"VALID\", \"claim\": \"30 + 20 = 50 正确。\"}], \"reason\": \"每一步都有题设支撑，无跳步或条件遗漏。\"}",
+        "reasoning": "",
+        "parse_status": "SUCCESS",
+        "parse_error": null,
+        "error": null,
+        "latency_ms": null,
+        "retry_count": 2,
+        "model": "mock",
+        "extra": {
+          "method": "R1-ReflectiveCritic",
+          "debate_triggered": false,
+          "triggers": [],
+          "independent": {
+            "status": "SUCCESS",
+            "final_answer": "50",
+            "outline": [
+              "Turtle 半块草坪 60/2 = 30 分钟",
+              "Rabbit 半块草坪 40/2 = 20 分钟",
+              "合计 30 + 20 = 50 分钟"
+            ],
+            "error": null
+          },
+          "stepwise_error": null,
+          "stepwise": {
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "step_id": 1,
+                "verdict": "VALID",
+                "claim": "题设给出整块 60 分钟。",
+                "error_type": null
+              },
+              {
+                "step_id": 2,
+                "verdict": "VALID",
+                "claim": "60/2 = 30 正确。",
+                "error_type": null
+              },
+              {
+                "step_id": 3,
+                "verdict": "VALID",
+                "claim": "题设给出整块 40 分钟。",
+                "error_type": null
+              },
+              {
+                "step_id": 4,
+                "verdict": "VALID",
+                "claim": "40/2 = 20 正确。",
+                "error_type": null
+              },
+              {
+                "step_id": 5,
+                "verdict": "VALID",
+                "claim": "30 + 20 = 50 正确。",
+                "error_type": null
+              }
+            ],
+            "process_correct": true,
+            "first_error_step": null,
+            "error_type": null,
+            "reason": "每一步都有题设支撑，无跳步或条件遗漏。",
+            "unknown_steps": [],
+            "error": null
+          },
+          "student_answer": "50",
+          "independent_disagree": false,
+          "answer_mismatch": false,
+          "symbolic_first_invalid": null,
+          "n_calls": 2
+        }
+      },
+      "gold": {
+        "process_correct": true,
+        "first_error_step": null,
+        "final_answer_correct": true
+      }
+    },
+    {
+      "id": "r1-root-error",
+      "title": "定位最早错误 · 计算失误并传播",
+      "headline": "学生答案 70，独立求解得到 60。两边对不上，打开指控，第 2 步乘法错误。",
+      "problem": "一个长方形长 12、宽 5。它的面积是多少？",
+      "gold_answer": "60",
+      "steps": [
+        "长方形面积等于长乘宽。",
+        "代入长和宽：12*5 = 70。",
+        "因此面积为 70。"
+      ],
+      "student_answer": "70",
+      "answer_verdict": "NOT_EQUIVALENT",
+      "unsupported_answer": false,
+      "audit": {
+        "sample_id": "r1-root-error",
+        "process_correct": false,
+        "first_error_step": 2,
+        "error_type": "ARITHMETIC_ERROR",
+        "reason": "第 2 步声称 12*5 = 70，正确值为 60，差值 10；第 3 步只是传播该错误。",
+        "raw": "{\"steps\": [{\"step_id\": 1, \"verdict\": \"VALID\", \"claim\": \"矩形面积公式正确。\"}, {\"step_id\": 2, \"verdict\": \"INVALID\", \"claim\": \"12*5 = 70，实际应为 60。\", \"error_type\": \"ARITHMETIC_ERROR\"}, {\"step_id\": 3, \"verdict\": \"UNKNOWN\", \"claim\": \"沿用了上一步的结果。\"}], \"reason\": \"第 2 步乘法错误。\"}",
+        "reasoning": "",
+        "parse_status": "SUCCESS",
+        "parse_error": null,
+        "error": null,
+        "latency_ms": null,
+        "retry_count": 4,
+        "model": "mock",
+        "extra": {
+          "method": "R1-ReflectiveCritic",
+          "debate_triggered": true,
+          "triggers": [
+            "answer_mismatch",
+            "independent_disagree",
+            "stepwise_unknown"
+          ],
+          "independent": {
+            "status": "SUCCESS",
+            "final_answer": "60",
+            "outline": [
+              "面积 = 长 × 宽 = 12 × 5",
+              "12 × 5 = 60"
+            ],
+            "error": null
+          },
+          "stepwise_error": null,
+          "stepwise": {
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "step_id": 1,
+                "verdict": "VALID",
+                "claim": "矩形面积公式正确。",
+                "error_type": null
+              },
+              {
+                "step_id": 2,
+                "verdict": "INVALID",
+                "claim": "12*5 = 70，实际应为 60。",
+                "error_type": "ARITHMETIC_ERROR"
+              },
+              {
+                "step_id": 3,
+                "verdict": "UNKNOWN",
+                "claim": "沿用了上一步的结果。",
+                "error_type": null
+              }
+            ],
+            "process_correct": false,
+            "first_error_step": 2,
+            "error_type": "ARITHMETIC_ERROR",
+            "reason": "第 2 步乘法错误。",
+            "unknown_steps": [
+              3
+            ],
+            "error": null
+          },
+          "student_answer": "70",
+          "independent_disagree": true,
+          "answer_mismatch": true,
+          "symbolic_first_invalid": null,
+          "debate": {
+            "n_calls": 2,
+            "accuser": {
+              "charge_stands": true,
+              "first_error_step": 2,
+              "error_type": "ARITHMETIC_ERROR",
+              "charge": "第 2 步声称 12*5 = 70，正确值为 60，差值 10；第 3 步只是传播该错误。",
+              "counterexample": "12*5 = 60 ≠ 70",
+              "error": null
+            },
+            "defender": {
+              "rebuts": false,
+              "reason": "无法反驳：乘法结果与正确值相差 10。",
+              "error": null
+            }
+          },
+          "n_calls": 4
+        }
+      },
+      "gold": {
+        "process_correct": false,
+        "first_error_step": 2,
+        "final_answer_correct": false
+      }
+    },
+    {
+      "id": "r1-unsupported",
+      "title": "答案正确 · 过程不成立",
+      "headline": "答案形式能对上，但第 3 步没排除 λ=0，过程不成立。",
+      "problem": "已知向量 v = (3, -4)。写出所有与 v 共线的非零向量的一般形式。",
+      "gold_answer": "(3λ, -4λ)",
+      "steps": [
+        "与 v 共线的向量可写为 k·v，其中 k 为实数。",
+        "代入 v = (3, -4)，得到 (3k, -4k)。",
+        "因此答案是 (3λ, -4λ)，λ 为任意实数。"
+      ],
+      "student_answer": "(3λ, -4λ)",
+      "answer_verdict": "EQUIVALENT",
+      "unsupported_answer": true,
+      "audit": {
+        "sample_id": "r1-unsupported",
+        "process_correct": false,
+        "first_error_step": 3,
+        "error_type": "ANSWER_FORMAT_ERROR",
+        "reason": "第 3 步把 λ 写成任意实数，包含 λ = 0，此时得到零向量，题目要求非零向量，答案形式不完整。",
+        "raw": "{\"steps\": [{\"step_id\": 1, \"verdict\": \"VALID\", \"claim\": \"共线向量可表示为数乘。\"}, {\"step_id\": 2, \"verdict\": \"VALID\", \"claim\": \"代入 v 得 (3k, -4k)。\"}, {\"step_id\": 3, \"verdict\": \"INVALID\", \"claim\": \"未排除 λ = 0，零向量不是非零向量，答案形式不完整。\", \"error_type\": \"ANSWER_FORMAT_ERROR\"}], \"reason\": \"第 3 步遗漏 λ ≠ 0 的约束。\"}",
+        "reasoning": "",
+        "parse_status": "SUCCESS",
+        "parse_error": null,
+        "error": null,
+        "latency_ms": null,
+        "retry_count": 4,
+        "model": "mock",
+        "extra": {
+          "method": "R1-ReflectiveCritic",
+          "debate_triggered": true,
+          "triggers": [
+            "independent_disagree"
+          ],
+          "independent": {
+            "status": "SUCCESS",
+            "final_answer": "(3/5, -4/5)",
+            "outline": [
+              "先求 |v| = 5",
+              "单位向量 = v/|v| = (3/5, -4/5)"
+            ],
+            "error": null
+          },
+          "stepwise_error": null,
+          "stepwise": {
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "step_id": 1,
+                "verdict": "VALID",
+                "claim": "共线向量可表示为数乘。",
+                "error_type": null
+              },
+              {
+                "step_id": 2,
+                "verdict": "VALID",
+                "claim": "代入 v 得 (3k, -4k)。",
+                "error_type": null
+              },
+              {
+                "step_id": 3,
+                "verdict": "INVALID",
+                "claim": "未排除 λ = 0，零向量不是非零向量，答案形式不完整。",
+                "error_type": "ANSWER_FORMAT_ERROR"
+              }
+            ],
+            "process_correct": false,
+            "first_error_step": 3,
+            "error_type": "ANSWER_FORMAT_ERROR",
+            "reason": "第 3 步遗漏 λ ≠ 0 的约束。",
+            "unknown_steps": [],
+            "error": null
+          },
+          "student_answer": "(3λ, -4λ)",
+          "independent_disagree": true,
+          "answer_mismatch": false,
+          "symbolic_first_invalid": null,
+          "debate": {
+            "n_calls": 2,
+            "accuser": {
+              "charge_stands": true,
+              "first_error_step": 3,
+              "error_type": "ANSWER_FORMAT_ERROR",
+              "charge": "第 3 步把 λ 写成任意实数，包含 λ = 0，此时得到零向量，题目要求非零向量，答案形式不完整。",
+              "counterexample": "λ = 0 时 (3λ, -4λ) = (0, 0)，不是非零向量。",
+              "error": null
+            },
+            "defender": {
+              "rebuts": false,
+              "reason": "确实遗漏了 λ ≠ 0 的约束。",
+              "error": null
+            }
+          },
+          "n_calls": 4
+        }
+      },
+      "gold": {
+        "process_correct": false,
+        "first_error_step": 3,
+        "final_answer_correct": true
+      }
+    }
+  ]
+}

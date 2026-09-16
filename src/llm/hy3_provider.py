@@ -15,6 +15,18 @@ from openai import OpenAI
 from src.llm.base import BaseLLMProvider, ProviderResult
 
 
+def is_non_retryable(error: str) -> bool:
+    """Quota / auth failures will not recover by waiting."""
+    text = error.lower()
+    return (
+        "401008" in error
+        or "error code: 402" in text
+        or "error code: 401" in text
+        or "quota" in text
+        or "unauthorized" in text
+    )
+
+
 class Hy3Provider(BaseLLMProvider):
     name = "hy3"
 
@@ -79,7 +91,7 @@ class Hy3Provider(BaseLLMProvider):
                 return content, reasoning, usage, None, attempts
             except Exception as exc:  # noqa: BLE001 - record and retry any transport error
                 last_error = f"{type(exc).__name__}: {exc}"
-                if attempt >= self._max_retries:
+                if is_non_retryable(last_error) or attempt >= self._max_retries:
                     break
                 delay = self._backoff_base**attempt + random.uniform(0, 0.5)
                 time.sleep(delay)

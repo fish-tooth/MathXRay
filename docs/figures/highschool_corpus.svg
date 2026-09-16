@@ -1,0 +1,17 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 220" width="640" height="220" role="img" aria-label="private high-school corpus">
+  <rect width="640" height="220" fill="#f7f8fb"/>
+  <text x="16" y="26" font-family="Segoe UI, Noto Sans SC, sans-serif" font-size="14" fill="#374151">私有高中语料 · 约 4297 道有逐步解答</text>
+  <text x="16" y="58" font-size="13" fill="#4b5563">模型答案与参考答案一致</text>
+  <rect x="220" y="46" width="300" height="16" fill="#eef2f7" rx="8"/>
+  <rect x="220" y="46" width="156" height="16" fill="#188a52" rx="8"/>
+  <text x="530" y="58" font-size="13" fill="#374151">1343</text>
+  <text x="16" y="98" font-size="13" fill="#4b5563">模型答案与参考答案不一致</text>
+  <rect x="220" y="86" width="300" height="16" fill="#eef2f7" rx="8"/>
+  <rect x="220" y="86" width="43" height="16" fill="#c0392b" rx="8"/>
+  <text x="530" y="98" font-size="13" fill="#374151">370</text>
+  <text x="16" y="138" font-size="13" fill="#4b5563">答案能否对齐尚不确定</text>
+  <rect x="220" y="126" width="300" height="16" fill="#eef2f7" rx="8"/>
+  <rect x="220" y="126" width="300" height="16" fill="#1a5fb4" rx="8"/>
+  <text x="530" y="138" font-size="13" fill="#374151">2584</text>
+  <text x="16" y="186" font-size="12" fill="#6b7280">评测冻结切片 n=88（seed 42）：答案错 28 · 答案对 28 · 官方详解 16 · 改错 16</text>
+</svg>

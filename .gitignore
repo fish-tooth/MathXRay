@@ -31,6 +31,8 @@ htmlcov/
 
 # --- Project data (raw may be non-redistributable) ---
 data/raw/
+data/high_school*.json
+data/processed/highschool*
 
 # --- Generated results (keep .gitkeep dirs, ignore generated files in git) ---
 # Do NOT delete local files under results/raw or results/summaries.

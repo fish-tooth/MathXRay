@@ -217,3 +217,36 @@ def test_hy3_provider_passes_generation_config(monkeypatch):
     assert captured["temperature"] == 0.0
     assert captured["max_tokens"] == 128
     assert captured["extra_body"] == {"reasoning_effort": "high"}
+
+
+class _QuotaFailCompletions:
+    def __init__(self) -> None:
+        self.calls = 0
+
+    def create(self, **kwargs):
+        self.calls += 1
+        raise RuntimeError(
+            "Error code: 402 - {'error': {'code': '401008', 'message': 'quota'}}"
+        )
+
+
+def test_hy3_quota_error_is_not_retried(monkeypatch):
+    completions = _QuotaFailCompletions()
+
+    class _Client:
+        def __init__(self) -> None:
+            self.completions = completions
+            self.chat = self
+
+    provider = Hy3Provider(
+        api_key="k",
+        model="m",
+        max_retries=3,
+        retry_backoff_base=1.0,
+        client=_Client(),
+    )
+    monkeypatch.setattr("time.sleep", lambda s: None)
+    result = provider.complete([{"role": "user", "content": "hi"}])
+    assert not result.ok
+    assert completions.calls == 1
+    assert "401008" in (result.error or "")

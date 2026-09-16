@@ -1,0 +1,18 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" width="640" height="280" role="img" aria-label="ProcessBench first-error">
+  <rect width="640" height="280" fill="#f7f8fb"/>
+  <text x="16" y="28" font-family="Segoe UI, Noto Sans SC, sans-serif" font-size="14" fill="#374151">ProcessBench B0 · 指出最早错步</text>
+  <line x1="56" y1="48" x2="56" y2="230" stroke="#e5e7eb"/>
+  <line x1="56" y1="230" x2="620" y2="230" stroke="#e5e7eb"/>
+  <rect x="90" y="92" width="70" height="138" fill="#1a5fb4" rx="4"/>
+  <text x="125" y="86" text-anchor="middle" font-size="12" fill="#1f2937">0.84</text>
+  <text x="125" y="248" text-anchor="middle" font-size="12" fill="#4b5563">GSM8K</text>
+  <rect x="220" y="97" width="70" height="133" fill="#1a5fb4" rx="4"/>
+  <text x="255" y="91" text-anchor="middle" font-size="12" fill="#1f2937">0.81</text>
+  <text x="255" y="248" text-anchor="middle" font-size="12" fill="#4b5563">MATH</text>
+  <rect x="350" y="108" width="70" height="122" fill="#1a5fb4" rx="4"/>
+  <text x="385" y="102" text-anchor="middle" font-size="12" fill="#1f2937">0.75</text>
+  <text x="385" y="248" text-anchor="middle" font-size="12" fill="#4b5563">Omni-MATH</text>
+  <rect x="480" y="118" width="70" height="112" fill="#1a5fb4" rx="4"/>
+  <text x="515" y="112" text-anchor="middle" font-size="12" fill="#1f2937">0.69</text>
+  <text x="515" y="248" text-anchor="middle" font-size="12" fill="#4b5563">Olympiad</text>
+</svg>

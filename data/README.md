@@ -39,6 +39,20 @@ Sampling: stratified by difficulty, seed 42. If API budget is limited this froze
 
 Licenses are recorded per row (`license_or_citation`). Do not republish datasets that forbid redistribution; the prep script downloads from Hugging Face at eval time.
 
+## Private high-school corpus (local only)
+
+`data/high_school_all_annotated_final.json` is gitignored. It contains 4300 高中数学题、官方详解，以及字段 `step_by_step_solution_gpt4o.Solution_Steps` 中的模型逐步解答（无专家首错标注）。
+
+```bash
+python scripts/prepare_highschool.py --stage pilot
+python scripts/run_highschool_b0.py --stage pilot
+python scripts/run_highschool_reflective.py --stage smoke
+```
+
+`R1-ReflectiveCritic` 在高中切片上开启 answer-aware：答案核失败会强制指控/辩护，不允许再把过程判成成立。独立求解只作私有脚手架，不把官方答案写进 prompt。
+
+评测切片写入 `data/processed/highschool_pilot.jsonl`（亦 gitignore）。金标准口径见该文件对应 manifest：答案错 → 过程错（无首错位置）；官方详解 → 弱正确过程；确定性 mutation → 可编程首错。
+
 ## TraceAdversarialBench
 
 Command:

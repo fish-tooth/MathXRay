@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.benchmark.adversarial import build_adversarial, mutate_arithmetic, mutate_unused_claim
+from src.benchmark.adversarial import build_adversarial, mutate_arithmetic
 from src.benchmark.processbench_adapter import CanonicalSample
 from src.benchmark.solvebench import extract_boxed, extract_gsm8k_answer, math_level_to_difficulty
 

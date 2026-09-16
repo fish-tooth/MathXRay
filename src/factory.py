@@ -8,6 +8,7 @@ from typing import Any
 from src.config import Config
 from src.evaluator.direct_judge import DirectJudge
 from src.evaluator.hybrid import HybridEvaluator
+from src.evaluator.reflective import ReflectiveCritic
 from src.llm.hy3_provider import Hy3Provider
 from src.llm.mock_provider import MockProvider
 from src.solver.math_solver import MathSolver
@@ -20,6 +21,12 @@ _MOCK_SOLVE = (
     '{"problem": "mock", "solution_steps": ['
     '{"step_id": 1, "statement": "mock step", "expression": "1+1=2", "depends_on": []}'
     '], "final_answer": "2"}'
+)
+_MOCK_REFLECTIVE = (
+    '{"final_answer": "2", "outline": ["1+1=2"], '
+    '"steps": [{"step_id": 1, "verdict": "VALID", "claim": "ok", "error_type": null}], '
+    '"reason": "mock", "charge_stands": false, "rebuts": false, '
+    '"process_correct": true, "first_error_step": null}'
 )
 
 
@@ -75,6 +82,25 @@ def build_judge(config: Config, provider_name: str = "hy3") -> DirectJudge:
     provider = build_provider(config, provider_name)
     model = config.model or ("mock" if provider_name == "mock" else "")
     return DirectJudge(provider, load_prompt(prompts_dir, "direct_judge.md"), model=model)
+
+
+def build_reflective(config: Config, provider_name: str = "hy3", *, answer_aware: bool = False) -> ReflectiveCritic:
+    prompts_dir = config.paths.get("prompts_dir", "prompts")
+    provider = (
+        MockProvider(default=_MOCK_REFLECTIVE)
+        if provider_name == "mock"
+        else build_provider(config, provider_name)
+    )
+    model = config.model or ("mock" if provider_name == "mock" else "")
+    names = (
+        "independent_solve.md",
+        "stepwise_critic.md",
+        "accuser.md",
+        "defender.md",
+        "arbiter.md",
+    )
+    prompts = {Path(name).stem: load_prompt(prompts_dir, name) for name in names}
+    return ReflectiveCritic(provider, prompts, model=model, answer_aware=answer_aware)
 
 
 def build_hybrid(config: Config, provider_name: str = "hy3") -> HybridEvaluator:

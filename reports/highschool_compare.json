@@ -1,0 +1,30 @@
+{
+  "dataset": "private_high_school",
+  "note": "Local-only frozen slice. Do not republish the source JSON.",
+  "n": 88,
+  "seed": 42,
+  "b0": {
+    "qwen_wrong_m1": 0.143,
+    "qwen_wrong_n": "4/28",
+    "official_m3": 0.438,
+    "official_n": "7/16",
+    "adversarial_m1": 0.812,
+    "adversarial_m2": 0.688,
+    "adversarial_m2_n": "11/16",
+    "probe_f1": 0.535,
+    "qwen_right_flagged": "4/28"
+  },
+  "r1": {
+    "qwen_wrong_m1": 1.0,
+    "qwen_wrong_n": "28/28",
+    "stepwise_only_m1": 0.179,
+    "gate_flips": 18,
+    "official_m3": 0.375,
+    "official_n": "6/16",
+    "adversarial_m1": 1.0,
+    "adversarial_m2": 0.75,
+    "adversarial_m2_n": "12/16",
+    "probe_f1": 0.5,
+    "qwen_right_flagged": "5/28"
+  }
+}

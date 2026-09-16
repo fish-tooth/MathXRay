@@ -1,4 +1,4 @@
-"""Capture MathXRay Streamlit scenes into demo/mathxray.gif.
+"""Capture MathXRay slides and app demo pages into demo/mathxray.gif.
 
 Requires a running app:  streamlit run app.py
 Optional:               pip install selenium
@@ -29,8 +29,50 @@ HIDE_CSS = """
 footer, #MainMenu { display: none !important; }
 [data-testid="stAppViewContainer"] { max-width: 100% !important; }
 section.main, [data-testid="stMain"] { margin: 0 !important; }
-.block-container { max-width: 1040px !important; padding-top: 1.1rem !important; }
+.block-container { max-width: 1080px !important; padding-top: 0.45rem !important; padding-bottom: 0.4rem !important; }
 """
+
+STORY_NEEDLES = [
+    "过程审查看什么",
+    "只看答案会漏掉什么",
+    "从解题到出报告",
+    "审查结果里有什么",
+    "一次看完就给结论",
+    "把审查拆成四段",
+    "先自己做一遍",
+    "每一段单独判断",
+    "错从哪一步进来",
+    "形式还不完整",
+    "什么时候才对质",
+    "指控、辩护、仲裁",
+    "汇总按固定顺序",
+    "应用里怎么查看",
+    "过程成立的例子",
+    "中间一步算错",
+    "答案对了，过程不完整",
+    "题越难，指出首错越吃力",
+    "各数据集对照",
+    "私有高中题，只在本地使用",
+    "同一 88 道题上的对照",
+    "四项对照",
+    "28 道是怎么判出来的",
+    "这些数字分别在说什么",
+    "这套设计好在哪",
+    "目前的限制",
+    "下一步",
+]
+
+APP_PAGES = [
+    ("/?embed=true&page=solve&demo_engine=r1&demo_case=0", "割草机", None),
+    ("/?embed=true&page=solve&demo_engine=r1&demo_case=1", "长方形", ".step.invalid"),
+    ("/?embed=true&page=solve&demo_engine=r1&demo_case=2", "共线", ".warn-banner"),
+    ("/?embed=true&page=dashboard", "评测看板", None),
+]
+
+DURATIONS_MS = [2400] * len(STORY_NEEDLES) + [3200, 3400, 3400, 3000]
+for i in (14, 15, 16, 20, 21, 22):
+    if i < len(STORY_NEEDLES):
+        DURATIONS_MS[i] = 3200
 
 
 def _driver(width: int, height: int) -> webdriver.Chrome:
@@ -48,7 +90,7 @@ def _driver(width: int, height: int) -> webdriver.Chrome:
 
 def _prepare(driver: webdriver.Chrome, needle: str, timeout: float = 25.0) -> None:
     WebDriverWait(driver, timeout).until(
-        EC.presence_of_element_located((By.CSS_SELECTOR, ".mx-title"))
+        EC.presence_of_element_located((By.CSS_SELECTOR, ".slide-title, .mx-title"))
     )
     WebDriverWait(driver, timeout).until(lambda d: needle in d.page_source)
     driver.execute_script(
@@ -57,7 +99,7 @@ def _prepare(driver: webdriver.Chrome, needle: str, timeout: float = 25.0) -> No
         "s.textContent=arguments[0];",
         HIDE_CSS,
     )
-    time.sleep(1.15)
+    time.sleep(0.7)
 
 
 def _shot(driver: webdriver.Chrome, name: str) -> Path:
@@ -67,57 +109,26 @@ def _shot(driver: webdriver.Chrome, name: str) -> Path:
     return path
 
 
-def _scroll_to(driver: webdriver.Chrome, selector: str) -> None:
-    driver.execute_script(
-        """
-        const el = document.querySelector(arguments[0]);
-        if (!el) return;
-        el.scrollIntoView({block: 'center', inline: 'nearest'});
-        const parents = [];
-        let n = el.parentElement;
-        while (n) { parents.push(n); n = n.parentElement; }
-        for (const p of parents) {
-          const cs = getComputedStyle(p);
-          if (/(auto|scroll)/.test(cs.overflowY) && p.scrollHeight > p.clientHeight + 8) {
-            const top = el.getBoundingClientRect().top - p.getBoundingClientRect().top + p.scrollTop - 80;
-            p.scrollTo(0, Math.max(0, top));
-            break;
-          }
-        }
-        """,
-        selector,
-    )
-    time.sleep(0.6)
-
-
 def capture(base: str, width: int, height: int) -> list[Path]:
     driver = _driver(width, height)
     paths: list[Path] = []
     try:
-        driver.get(f"{base}/?embed=true&page=solve&case=0")
-        _prepare(driver, "一条干净的推理链")
-        paths.append(_shot(driver, "01_case1_hero.png"))
-        _scroll_to(driver, ".step")
-        paths.append(_shot(driver, "02_case1_steps.png"))
-
-        driver.get(f"{base}/?embed=true&page=solve&case=1")
-        _prepare(driver, "12*5=70")
-        paths.append(_shot(driver, "03_case2_cards.png"))
-        _scroll_to(driver, ".step.root")
-        paths.append(_shot(driver, "04_case2_root.png"))
-
-        driver.get(f"{base}/?embed=true&page=solve&case=2")
-        _prepare(driver, "Unsupported")
-        paths.append(_shot(driver, "05_case3_banner.png"))
-        _scroll_to(driver, ".step.root")
-        paths.append(_shot(driver, "06_case3_root.png"))
-
-        driver.get(f"{base}/?embed=true&page=dashboard")
-        _prepare(driver, "M2 First-Error Exact")
-        time.sleep(1.4)
-        paths.append(_shot(driver, "07_dashboard_metrics.png"))
-        _scroll_to(driver, "[data-testid='stArrowVegaLiteChart'], .stVegaLiteChart, canvas")
-        paths.append(_shot(driver, "08_dashboard_chart.png"))
+        for i, needle in enumerate(STORY_NEEDLES):
+            driver.get(f"{base}/?embed=true&page=story&slide={i}")
+            _prepare(driver, needle)
+            paths.append(_shot(driver, f"{i:02d}_story.png"))
+        for j, (path, needle, scroll) in enumerate(APP_PAGES):
+            print(f"app {j} {needle}")
+            driver.get(base.rstrip("/") + path)
+            _prepare(driver, needle)
+            if scroll:
+                driver.execute_script(
+                    "const e=document.querySelector(arguments[0]);"
+                    "if(e) e.scrollIntoView({block:'center'});",
+                    scroll,
+                )
+                time.sleep(0.35)
+            paths.append(_shot(driver, f"{len(STORY_NEEDLES) + j:02d}_app.png"))
     finally:
         driver.quit()
     return paths
@@ -131,14 +142,13 @@ def _normalize(path: Path, size: tuple[int, int]) -> Image.Image:
         if im.size[1] > h:
             im = im.crop((0, 0, w, h))
         elif im.size[1] < h:
-            canvas = Image.new("RGB", size, (250, 250, 252))
+            canvas = Image.new("RGB", size, (247, 248, 251))
             canvas.paste(im, (0, 0))
             im = canvas
     return im
 
 
 def compose_gif(frame_paths: list[Path], width: int, height: int) -> Path:
-    durations_ms = [2400, 2200, 1800, 2800, 2600, 2200, 2400, 2200]
     images = [_normalize(p, (width, height)) for p in frame_paths]
     palette_src = images[0].quantize(colors=64, method=Image.Quantize.MEDIANCUT)
     paletted = [im.quantize(palette=palette_src) for im in images]
@@ -147,7 +157,7 @@ def compose_gif(frame_paths: list[Path], width: int, height: int) -> Path:
         GIF_PATH,
         save_all=True,
         append_images=paletted[1:],
-        duration=durations_ms[: len(paletted)],
+        duration=DURATIONS_MS[: len(paletted)],
         loop=0,
         optimize=False,
         disposal=2,

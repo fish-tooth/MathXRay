@@ -21,6 +21,7 @@ from typing import Any
 from src.analysis.metrics import MetricsResult, compute_metrics
 from src.benchmark.processbench_adapter import CanonicalSample
 from src.evaluator.direct_judge import DirectJudge, JudgePrediction
+from src.llm.hy3_provider import is_non_retryable
 from src.run_metadata import stable_hash
 
 
@@ -30,20 +31,22 @@ def run_signature(
     model: str,
     system_prompt: str,
     generation_config: dict[str, Any],
+    provider: str | None = None,
 ) -> str:
     """Deterministic signature of everything that affects a judge's output.
 
-    Changing the prompt, model, or any generation setting produces a different
-    signature, which prevents stale cached predictions from being reused.
+    Changing the prompt, model, provider, or any generation setting produces a
+    different signature, which prevents stale cached predictions from being reused.
     """
-    return stable_hash(
-        {
-            "method": method,
-            "model": model,
-            "system_prompt": system_prompt,
-            "generation_config": generation_config,
-        }
-    )
+    payload: dict[str, Any] = {
+        "method": method,
+        "model": model,
+        "system_prompt": system_prompt,
+        "generation_config": generation_config,
+    }
+    if provider is not None:
+        payload["provider"] = provider
+    return stable_hash(payload)
 
 
 def build_raw_record(
@@ -145,6 +148,17 @@ def run_baseline(
             )
             new_records.append(record)
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
+            f.flush()
+            done = n_resumed + len(new_records)
+            err = "quota" if (prediction.error and is_non_retryable(prediction.error)) else (prediction.error or "")
+            latency = f"{prediction.latency_ms:.0f}ms" if prediction.latency_ms is not None else "-"
+            print(
+                f"[run] {done}/{len(samples)} {sample.sample_id} "
+                f"{prediction.parse_status} {latency} {err}".rstrip(),
+                flush=True,
+            )
+            if prediction.error and is_non_retryable(prediction.error):
+                break
 
     return RunResult(records=existing + new_records, n_new=len(new_records), n_resumed=n_resumed)
 
