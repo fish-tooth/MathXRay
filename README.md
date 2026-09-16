@@ -4,7 +4,7 @@
 
 **MathXRay** 用 Hy3 做数学题，并审查写出的步骤：答案对不对、过程能不能站住、错从哪一步进来。
 
-点开 [演示回放](https://cdn.jsdelivr.net/gh/fish-tooth/MathXRay@main/docs/play/index.html) 可以直接暂停、上一页、下一页。站点发布后也可以用 [GitHub Pages 演示](https://fish-tooth.github.io/MathXRay/play/)。
+点开 [演示回放](https://fish-tooth.github.io/MathXRay/play/) 可以直接暂停、上一页、下一页，不会跳到源码页。
 
 <video controls playsinline width="100%" src="https://fish-tooth.github.io/MathXRay/play/mathxray.mp4"></video>
 
