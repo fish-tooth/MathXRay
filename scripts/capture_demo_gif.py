@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
+import subprocess
 import time
 from pathlib import Path
 
@@ -23,6 +25,7 @@ DEMO_DIR = ROOT / "demo"
 FRAMES = DEMO_DIR / "frames"
 GIF_PATH = DEMO_DIR / "mathxray.gif"
 PLAYER_PATH = DEMO_DIR / "player.html"
+PLAY_DIR = ROOT / "docs" / "play"
 MANIFEST_PATH = FRAMES / "manifest.js"
 HIDE_CSS = """
 [data-testid="stHeader"], header[data-testid="stHeader"],
@@ -190,20 +193,80 @@ def listed_frames() -> list[Path]:
     return paths
 
 
-def write_manifest(frame_paths: list[Path]) -> None:
+def write_manifest(frame_paths: list[Path], dest: Path, src_names: list[str] | None = None) -> None:
     titles = list(STORY_NEEDLES) + [item[3] for item in APP_PAGES]
     frames = []
     for i, path in enumerate(frame_paths):
+        name = src_names[i] if src_names else path.name
         frames.append(
             {
-                "src": f"frames/{path.name}",
+                "src": f"frames/{name}",
                 "ms": int(DURATIONS_MS[i] if i < len(DURATIONS_MS) else 2800),
                 "title": titles[i] if i < len(titles) else path.stem,
             }
         )
-    FRAMES.mkdir(parents=True, exist_ok=True)
+    dest.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps({"frames": frames}, ensure_ascii=False, indent=2)
-    MANIFEST_PATH.write_text(f"window.MX_DEMO = {payload};\n", encoding="utf-8")
+    dest.write_text(f"window.MX_DEMO = {payload};\n", encoding="utf-8")
+
+
+def compose_mp4(jpeg_paths: list[Path], out: Path) -> None:
+    import imageio_ffmpeg
+
+    exe = imageio_ffmpeg.get_ffmpeg_exe()
+    lst = jpeg_paths[0].parent / "_concat.txt"
+    lines: list[str] = []
+    for i, path in enumerate(jpeg_paths):
+        ms = DURATIONS_MS[i] if i < len(DURATIONS_MS) else 6000
+        lines.append(f"file '{path.name}'")
+        lines.append(f"duration {ms / 1000:.3f}")
+    lines.append(f"file '{jpeg_paths[-1].name}'")
+    lst.write_text("\n".join(lines) + "\n", encoding="ascii")
+    subprocess.run(
+        [
+            exe,
+            "-y",
+            "-f",
+            "concat",
+            "-safe",
+            "0",
+            "-i",
+            lst.name,
+            "-fps_mode",
+            "vfr",
+            "-pix_fmt",
+            "yuv420p",
+            "-movflags",
+            "+faststart",
+            str(out.resolve()),
+        ],
+        check=True,
+        cwd=str(jpeg_paths[0].parent),
+    )
+    lst.unlink(missing_ok=True)
+
+
+def export_play_site(frame_paths: list[Path]) -> Path:
+    frames_dir = PLAY_DIR / "frames"
+    if frames_dir.exists():
+        shutil.rmtree(frames_dir)
+    frames_dir.mkdir(parents=True, exist_ok=True)
+    jpegs: list[Path] = []
+    names: list[str] = []
+    for i, src in enumerate(frame_paths):
+        im = _resize(Image.open(src).convert("RGB"), (960, 540))
+        name = f"{i:02d}.jpg"
+        dest = frames_dir / name
+        im.save(dest, format="JPEG", quality=72, optimize=True)
+        jpegs.append(dest)
+        names.append(name)
+    write_manifest(frame_paths, frames_dir / "manifest.js", names)
+    shutil.copyfile(PLAYER_PATH, PLAY_DIR / "index.html")
+    (PLAY_DIR / ".nojekyll").write_text("", encoding="utf-8")
+    mp4 = PLAY_DIR / "mathxray.mp4"
+    compose_mp4(jpegs, mp4)
+    print(f"play={PLAY_DIR} mp4={mp4.stat().st_size}")
+    return PLAY_DIR
 
 
 def main() -> None:
@@ -223,7 +286,8 @@ def main() -> None:
     frames = listed_frames() if args.from_frames else capture(
         args.base.rstrip("/"), args.width, args.height, args.dpr
     )
-    write_manifest(frames)
+    write_manifest(frames, MANIFEST_PATH)
+    export_play_site(frames)
     out = compose_gif(frames, args.gif_width, args.gif_height)
     print(f"frames={len(frames)} gif={out} size={out.stat().st_size} player={PLAYER_PATH}")
 

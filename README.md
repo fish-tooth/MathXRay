@@ -1,12 +1,14 @@
 # MathXRay
 
-
+<img src="docs/figures/logo.svg" width="36" height="36" alt="MathXRay logo" align="left" />
 
 **MathXRay** 用 Hy3 做数学题，并审查写出的步骤：答案对不对、过程能不能站住、错从哪一步进来。
 
-打开 [可暂停的演示回放](demo/player.html)（上一页 / 播放暂停 / 下一页）。下面是自动循环预览：
+点开 [演示回放](https://cdn.jsdelivr.net/gh/fish-tooth/MathXRay@main/docs/play/index.html) 可以直接暂停、上一页、下一页。站点发布后也可以用 [GitHub Pages 演示](https://fish-tooth.github.io/MathXRay/play/)。
 
-演示
+<video controls playsinline width="100%" src="https://fish-tooth.github.io/MathXRay/play/mathxray.mp4"></video>
+
+![演示](demo/mathxray.gif)
 
 ## 启动应用
 
