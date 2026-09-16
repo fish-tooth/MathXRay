@@ -2,11 +2,7 @@
 
 <img src="docs/figures/logo.svg" width="36" height="36" alt="MathXRay logo" align="left" />
 
-**MathXRay** 用 Hy3 做数学题，并审查写出的步骤：答案对不对、过程能不能站住、错从哪一步进来。
-
-点开 [演示回放](https://fish-tooth.github.io/MathXRay/play/) 可以直接暂停、上一页、下一页，不会跳到源码页。
-
-<video controls playsinline width="100%" src="https://fish-tooth.github.io/MathXRay/play/mathxray.mp4"></video>
+**MathXRay** : 基于 Hy3 的数学题目审查应用。能够判断题目的答案是否正确，审查具体解答过程正确与否并进行定位。
 
 ![演示](demo/mathxray.gif)
 
@@ -27,28 +23,24 @@ pip install -e .
 streamlit run app.py
 ```
 
-浏览器打开终端里给出的地址（一般是 `http://localhost:8501`）。
+浏览器打开终端地址（ `http://localhost:8501`）。
 
 
-| 页面    | 做什么                       |
+| 页面    | 实现功能                       |
 | ----- | ------------------------- |
 | 解题与审查 | 三道演示题不用接口；也可以贴自己的题，调用 Hy3 |
 | 评测看板  | 公开集和私有集上的数字               |
 | 错误探索  | 按来源和过程状态翻原始样本             |
-| 演示分镜  | 一页页看框架说明                  |
-
 
 Hy3 在项目里有两个角色：**Solver** 写出步骤和最终答案；**Critic** 审查这些步骤。审查可切换：
 
 
-|      | B0 Direct Judge          | R1 Reflective Critic             |
+|      | B0 Direct Judge（一次性判断）          | R1 Reflective Critic（反思批判）             |
 | ---- | ------------------------ | -------------------------------- |
-| 做法   | 一次看完全文，直接给出过程对错、首错步、错误类型 | 自己先做一遍 → 一段一段看 → 对不上再对质 → 按规则下结论 |
+| 实现   | 一次看完题目全文，直接给出过程对错、首错步、错误类型 | 自己先做一遍 → 一段一段看 → 对不上再对质 → 按规则下结论 |
 | 公开评测 | ProcessBench 主结果         | 尚未在 ProcessBench 上运行             |
 | 应用   | 可选                       | 默认                               |
 
-
-参考答案不写入审查提示。私有高中评测里，若学生答案已经和参考答案对不上，R1 不允许再把过程判成成立。能用计算证伪的步骤优先于模型口头判断。
 
 离线检查：
 
@@ -57,7 +49,7 @@ pytest
 python scripts/run_b0_baseline.py --stage smoke --provider mock
 ```
 
-## 审查流程
+## 本评测框架的审查流程
 
 ```mermaid
 flowchart TD
@@ -82,15 +74,15 @@ flowchart TD
     FA --> UA[答案对错 · unsupported]
 ```
 
-R1 对质只在这些情况下打开：独立结论和学生答案对不上、某段是 UNKNOWN、或答案校验失败。汇总顺序：符号 INVALID → 仲裁 → 未反驳的指控 → 逐段第一个 INVALID → 答案对不上则过程不能成立。
+R1 对质只在以下情况下打开：独立结论和学生答案对不上、某段解题过程是 UNKNOWN、或答案校验失败。汇总顺序：符号 INVALID → 仲裁 → 未反驳的指控 → 逐段第一个 INVALID → 答案对不上则过程不能成立。
 
 ## 数据集
 
-评测分公开集和一份只在本地使用的私有高中语料。构造说明见 `[data/README.md](data/README.md)`，指标口径见 `[docs/evaluation_protocol.md](docs/evaluation_protocol.md)`。
+评测数据集：①公开数据集；②个人构建的高中数学习题语料。构造说明见 `[data/README.md](data/README.md)`，指标设计见 `[docs/evaluation_protocol.md](docs/evaluation_protocol.md)`。
 
 ### ProcessBench
 
-第三方过程评测。每条样本带「最早错误步号」（从 0 计，过程成立为 −1）。本仓库使用分层切片，而不是全量约 3400 条。
+第三方过程评测。每条样本带「最早错误步号」（从 0 计，过程成立为 −1）。本仓库使用分层切片。
 
 
 | 来源            | 难度  | 切片条数    | 内容                    |
@@ -157,7 +149,7 @@ python scripts/run_solvebench.py --max-samples 90
 | 冻结评测切片     | 88   | seed 42，见下表 |
 
 
-冻结切片 `data/processed/highschool_{smoke,pilot}.jsonl` 同样 gitignore：
+冻结切片 `data/processed/highschool_{smoke,pilot}.jsonl` ：
 
 
 | 子集       | smoke | pilot | 能看什么         |
@@ -205,7 +197,7 @@ R1 在该切片上开启 `answer_aware`：答案对不上则过程不能成立�
 
 加上 OlympiadBench 后 n=349，M2 约 0.75。答案对但过程不成立的样本，三数据集上召回约 0.92。预测错误类型里，概念错误、题意误读、计算错误较多，完整表见 `[reports/official/processbench_three_datasets.md](reports/official/processbench_three_datasets.md)`。
 
-### 私有高中数学题数据集
+### 个人构建的高中数学题数据集
 
 B0 与 R1 对照
 

@@ -28,15 +28,26 @@ PLAYER_PATH = DEMO_DIR / "player.html"
 PLAY_DIR = ROOT / "docs" / "play"
 MANIFEST_PATH = FRAMES / "manifest.js"
 HIDE_CSS = """
+html { zoom: 1.08 !important; }
 [data-testid="stHeader"], header[data-testid="stHeader"],
 [data-testid="stToolbar"], [data-testid="stDecoration"],
 [data-testid="stStatusWidget"], .stDeployButton,
 [data-testid="stSidebar"], [data-testid="collapsedControl"],
 footer, #MainMenu { display: none !important; }
-[data-testid="stAppViewContainer"] { max-width: 100% !important; }
-section.main, [data-testid="stMain"] { margin: 0 !important; }
-.block-container { max-width: 1320px !important; padding-top: 0.4rem !important; padding-bottom: 0.35rem !important; }
+[data-testid="stAppViewContainer"], [data-testid="stMain"], section.main {
+  max-width: 100% !important; margin: 0 !important; padding: 0 !important;
+}
+.block-container, [data-testid="stMainBlockContainer"], .stMainBlockContainer {
+  max-width: 100% !important;
+  padding: 0.12rem 0.7rem 0.1rem !important;
+}
+[data-testid="stVerticalBlock"] { gap: 0.4rem !important; }
 .stButton, [data-testid="stButton"], [data-testid="stCaptionContainer"] { display: none !important; }
+.metric-card .v { white-space: nowrap; }
+.brandbar { padding-bottom: 6px !important; margin-bottom: 4px !important; }
+.mx-hero { padding: 0 !important; margin-bottom: 6px !important; }
+.pager { display: none !important; }
+.slide { zoom: 1.14 !important; }
 """
 
 STORY_NEEDLES = [
@@ -70,13 +81,14 @@ STORY_NEEDLES = [
 ]
 
 APP_PAGES = [
-    ("/?embed=true&page=solve&demo_engine=r1&demo_case=0", "割草机", None, "过程对了的例子"),
-    ("/?embed=true&page=solve&demo_engine=r1&demo_case=1", "长方形", ".step.invalid", "中间一步算错"),
-    ("/?embed=true&page=solve&demo_engine=r1&demo_case=2", "共线", ".warn-banner", "答案对了，过程不完整"),
-    ("/?embed=true&page=dashboard", "评测看板", None, "评测看板"),
+    ("/?embed=true&capture=1&page=solve&demo_engine=r1&demo_case=0", "割草机", None, "过程对了的例子"),
+    ("/?embed=true&capture=1&page=solve&demo_engine=r1&demo_case=1", "长方形", ".step.invalid", "中间一步算错"),
+    ("/?embed=true&capture=1&page=solve&demo_engine=r1&demo_case=2", "共线", ".warn-banner", "答案对了，过程不完整"),
+    ("/?embed=true&capture=1&page=dashboard&dash=official", "按数据集拆开看", None, "公开评测看板"),
+    ("/?embed=true&capture=1&page=dashboard&dash=private", "私有高中题集", None, "私有集对照"),
 ]
 
-DURATIONS_MS = [6000] * len(STORY_NEEDLES) + [8000, 8000, 8000, 7000]
+DURATIONS_MS = [6000] * len(STORY_NEEDLES) + [8000, 8000, 8000, 8000, 8000]
 for i in (1, 2, 5, 11, 12, 17, 18, 19, 20, 21, 22, 23):
     if i < len(STORY_NEEDLES):
         DURATIONS_MS[i] = 7500
@@ -120,7 +132,7 @@ def _prepare(driver: webdriver.Chrome, needle: str, timeout: float = 25.0) -> No
         "s.textContent=arguments[0];",
         HIDE_CSS,
     )
-    time.sleep(0.7)
+    time.sleep(1.1)
 
 
 def _shot(driver: webdriver.Chrome, name: str) -> Path:
@@ -142,8 +154,8 @@ def capture(base: str, width: int, height: int, dpr: float) -> list[Path]:
             print(f"app {j} {needle}")
             driver.get(base.rstrip("/") + path)
             _prepare(driver, needle)
-            if needle == "评测看板":
-                time.sleep(1.2)
+            if "dashboard" in path:
+                time.sleep(1.4)
             if scroll:
                 driver.execute_script(
                     "const e=document.querySelector(arguments[0]);"
@@ -165,9 +177,9 @@ def _resize(im: Image.Image, size: tuple[int, int]) -> Image.Image:
 
 def compose_gif(frame_paths: list[Path], width: int, height: int) -> Path:
     images = [_resize(Image.open(p).convert("RGB"), (width, height)) for p in frame_paths]
-    palette_src = images[0].quantize(colors=128, method=Image.Quantize.MAXCOVERAGE)
     paletted = [
-        im.quantize(palette=palette_src, dither=Image.Dither.NONE) for im in images
+        im.quantize(colors=256, method=Image.Quantize.MAXCOVERAGE, dither=Image.Dither.NONE)
+        for im in images
     ]
     DEMO_DIR.mkdir(parents=True, exist_ok=True)
     paletted[0].save(
@@ -254,10 +266,10 @@ def export_play_site(frame_paths: list[Path]) -> Path:
     jpegs: list[Path] = []
     names: list[str] = []
     for i, src in enumerate(frame_paths):
-        im = _resize(Image.open(src).convert("RGB"), (960, 540))
+        im = _resize(Image.open(src).convert("RGB"), (1600, 900))
         name = f"{i:02d}.jpg"
         dest = frames_dir / name
-        im.save(dest, format="JPEG", quality=72, optimize=True)
+        im.save(dest, format="JPEG", quality=92, optimize=True)
         jpegs.append(dest)
         names.append(name)
     write_manifest(frame_paths, frames_dir / "manifest.js", names)
@@ -272,11 +284,11 @@ def export_play_site(frame_paths: list[Path]) -> Path:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base", default="http://127.0.0.1:8501")
-    parser.add_argument("--width", type=int, default=1920)
-    parser.add_argument("--height", type=int, default=1080)
+    parser.add_argument("--width", type=int, default=1600)
+    parser.add_argument("--height", type=int, default=900)
     parser.add_argument("--dpr", type=float, default=2.0)
-    parser.add_argument("--gif-width", type=int, default=960)
-    parser.add_argument("--gif-height", type=int, default=540)
+    parser.add_argument("--gif-width", type=int, default=1600)
+    parser.add_argument("--gif-height", type=int, default=900)
     parser.add_argument(
         "--from-frames",
         action="store_true",

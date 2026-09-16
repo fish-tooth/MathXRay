@@ -64,48 +64,48 @@ html, body, [class*="css"], .stApp { font-family: "Noto Sans SC", "Segoe UI", sa
 }
 @keyframes griddrift { to { background-position: 44px 44px, 44px 44px; } }
 @keyframes floaty { 50% { transform: translate(-28px, 22px) scale(1.08); } }
-.block-container { padding-top: 1.1rem; max-width: 1180px; position: relative; z-index: 1; }
+.block-container { padding-top: 0.7rem; max-width: 1280px; position: relative; z-index: 1; }
 h1, h2, h3 { font-family: "Source Serif 4", "Noto Serif SC", serif; color: var(--ink); }
-p, li, label { font-size: 16px; line-height: 1.65; }
+p, li, label { font-size: 20px; line-height: 1.6; }
 [data-testid="stSidebar"] { background: linear-gradient(180deg, #e8f0fa 0%, #f4f7fc 40%); border-right: 1px solid var(--soft); }
-[data-testid="stSidebar"] p, [data-testid="stSidebar"] label { font-size: 15px; }
-.mx-hero { padding: 4px 0 16px; margin-bottom: 16px; }
+[data-testid="stSidebar"] p, [data-testid="stSidebar"] label { font-size: 17px; }
+.mx-hero { padding: 0 0 8px; margin-bottom: 8px; }
 .mx-hero-row { display:flex; align-items:center; gap:14px; }
-.mx-logo { width:44px; height:44px; flex-shrink:0; filter: drop-shadow(0 4px 10px rgba(26,95,180,.28)); }
-.mx-logo svg { width:44px; height:44px; }
-.mx-kicker { color: var(--brand); font-weight: 700; letter-spacing: .12em; font-size: 12px; }
-.mx-title { font-size: 36px; margin: 2px 0 6px; letter-spacing: -.02em; }
-.mx-sub { color: var(--muted); font-size: 17px; line-height: 1.6; }
-.pipeline { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin: 14px 0 4px; }
+.mx-logo { width:56px; height:56px; flex-shrink:0; filter: drop-shadow(0 4px 10px rgba(26,95,180,.28)); }
+.mx-logo svg { width:56px; height:56px; }
+.mx-kicker { color: var(--brand); font-weight: 700; letter-spacing: .12em; font-size: 16px; }
+.mx-title { font-size: 54px; margin: 2px 0 6px; letter-spacing: -.02em; }
+.mx-sub { color: var(--muted); font-size: 24px; line-height: 1.5; }
+.pipeline { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin: 12px 0 4px; }
 .pipe { display:flex; align-items:center; gap:8px; background: rgba(255,255,255,.88); border:1px solid var(--soft);
-  border-radius:999px; padding:7px 14px 7px 8px; font-size:15px; font-weight:600; color: var(--ink);
+  border-radius:999px; padding:8px 16px 8px 8px; font-size:18px; font-weight:600; color: var(--ink);
   box-shadow: 0 6px 16px rgba(26,95,180,.10); backdrop-filter: blur(8px); }
-.pipe span { width:24px; height:24px; border-radius:50%; background: var(--brand); color:#fff;
-  display:flex; align-items:center; justify-content:center; font-size:13px; }
-.pipe-arr { color: var(--brand); font-size:18px; opacity:.55; }
-.badge { display:inline-block; padding: 4px 12px; border-radius: 999px; font-size: 14px; font-weight: 600; }
+.pipe span { width:28px; height:28px; border-radius:50%; background: var(--brand); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:15px; }
+.pipe-arr { color: var(--brand); font-size:22px; opacity:.55; }
+.badge { display:inline-block; padding: 4px 12px; border-radius: 999px; font-size: 16px; font-weight: 600; }
 .badge-ok { background:#e5f6ec; color: var(--ok); }
 .badge-bad { background:#fdecea; color: var(--bad); }
 .badge-warn { background:#fff4e5; color: var(--warn); }
 .step { border: 1px solid rgba(197,216,240,.9); background: rgba(255,255,255,.8); border-radius: 14px;
-  padding: 14px 16px; margin-bottom: 10px; font-size:16px; line-height:1.6;
+  padding: 14px 16px; margin-bottom: 10px; font-size:20px; line-height:1.55;
   box-shadow: 0 8px 20px rgba(26,95,180,.07); backdrop-filter: blur(10px); }
 .step.root, .step.invalid { border-color: #f0b4ae; background: #fff5f4; }
 .step.prop, .step.unknown { border-color: #f0d2a8; background: #fff8ee; }
 .metric-card { border: 1px solid rgba(197,216,240,.9); background: rgba(255,255,255,.78);
-  border-radius: 16px; padding: 16px 18px; backdrop-filter: blur(12px);
+  border-radius: 16px; padding: 14px 16px; backdrop-filter: blur(12px);
   box-shadow: 0 10px 28px rgba(26,95,180,.10), inset 0 1px 0 rgba(255,255,255,.8); }
-.metric-card .v { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
-.metric-card .k { color: var(--muted); font-size: 14px; font-weight: 600; }
-.warn-banner { background: #fff8ee; border:1px solid #f0d2a8; border-radius:14px; padding:14px 18px; font-size:16px; color: var(--ink); }
+.metric-card .v { font-size: 48px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
+.metric-card .k { color: var(--muted); font-size: 20px; font-weight: 600; }
+.warn-banner { background: #fff8ee; border:1px solid #f0d2a8; border-radius:14px; padding:14px 18px; font-size:20px; color: var(--ink); }
 .stage { background: rgba(255,255,255,.8); border:1px solid rgba(197,216,240,.9); border-radius:16px;
   padding:16px 18px 12px; margin-bottom:14px; backdrop-filter: blur(12px);
   box-shadow: 0 10px 26px rgba(26,95,180,.08); }
-.stage .h { font-weight:700; font-size:18px; color: var(--brand-dark); display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-.stage .h .n { width:28px; height:28px; border-radius:50%; background: var(--brand); color:#fff; font-size:14px;
+.stage .h { font-weight:700; font-size:22px; color: var(--brand-dark); display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.stage .h .n { width:30px; height:30px; border-radius:50%; background: var(--brand); color:#fff; font-size:16px;
   display:inline-flex; align-items:center; justify-content:center; }
-.stage .hint { font-size:15px; color: var(--muted); margin-bottom:10px; }
-.verdict { font-size:13px; font-weight:700; padding:3px 10px; border-radius:999px; }
+.stage .hint { font-size:18px; color: var(--muted); margin-bottom:10px; }
+.verdict { font-size:15px; font-weight:700; padding:3px 10px; border-radius:999px; }
 .v-valid { background:#e5f6ec; color: var(--ok); }
 .v-invalid { background:#fdecea; color: var(--bad); }
 .v-unknown { background:#fff4e5; color: var(--warn); }
@@ -115,21 +115,21 @@ p, li, label { font-size: 16px; line-height: 1.65; }
   content: "◇"; position: absolute; right: 4px; top: 36px; font-size: 132px; line-height: 1;
   color: rgba(26,95,180,.07); transform: rotate(16deg); pointer-events: none; font-family: Georgia, serif;
 }
-.slide-title { font-family: "Source Serif 4", serif; font-size: 30px; margin: 6px 0 10px; line-height: 1.3; color: var(--ink); }
-.slide-lead { font-size: 17px; line-height: 1.7; color: var(--muted); margin-bottom: 14px; }
-.slide-p { font-size: 16px; line-height: 1.7; color: var(--ink); margin: 0 0 10px; }
+.slide-title { font-family: "Source Serif 4", serif; font-size: 48px; margin: 4px 0 10px; line-height: 1.25; color: var(--ink); }
+.slide-lead { font-size: 24px; line-height: 1.55; color: var(--muted); margin-bottom: 12px; }
+.slide-p { font-size: 22px; line-height: 1.6; color: var(--ink); margin: 0 0 10px; }
 .flow-box { background: rgba(255,255,255,.8); border:1px solid rgba(197,216,240,.9); border-radius:14px;
-  padding:12px 16px; margin-bottom:10px; font-size:16px; line-height:1.65;
+  padding:12px 16px; margin-bottom:10px; font-size:20px; line-height:1.55;
   box-shadow: 0 8px 18px rgba(26,95,180,.07); backdrop-filter: blur(10px); }
 .flow-box b { color: var(--brand); }
 .flow-box.active { border-color: var(--brand); background: var(--wash); }
 .flow-box.warn { border-color:#f0d2a8; background:#fff8ee; }
 .flow-box.bad { border-color:#f0b4ae; background:#fff5f4; }
 .flow-box.ok { border-color:#b7e0c6; background:#eef8f2; }
-.tiny { font-size:14px; color: var(--muted); line-height:1.55; margin-top:4px; }
+.tiny { font-size:18px; color: var(--muted); line-height:1.5; margin-top:4px; }
 .cmp { border-collapse: collapse; width:100%; background:#fff; border-radius:14px; overflow:hidden; box-shadow: 0 6px 16px rgba(26,95,180,.05); }
-.cmp th { background: var(--wash); font-size:14px; padding:10px 12px; text-align:left; color: var(--muted); }
-.cmp td { border-top:1px solid var(--soft); font-size:16px; padding:10px 12px; }
+.cmp th { background: var(--wash); font-size:20px; padding:12px 14px; text-align:left; color: var(--muted); }
+.cmp td { border-top:1px solid var(--soft); font-size:24px; padding:12px 14px; font-weight:600; }
 .kv { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
 .kv3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; }
 .two { display:grid; grid-template-columns: 1.15fr 0.85fr; gap:14px; align-items:start; }
@@ -141,44 +141,44 @@ p, li, label { font-size: 16px; line-height: 1.65; }
   border-radius: 999px; box-shadow: 0 12px 28px rgba(26,95,180,.28); color:#fff;
 }
 .transport button { font: inherit; }
-.chart-card .cap { font-size:14px; color: var(--muted); margin: 2px 0 6px; }
-.vbars { display:flex; gap:22px; align-items:flex-end; height:210px; padding: 8px 8px 0; }
+.chart-card .cap { font-size:22px; color: var(--muted); margin: 2px 0 10px; font-weight:600; }
+.vbars { display:flex; gap:22px; align-items:flex-end; height:240px; padding: 16px 8px 0; }
 .vgroup { flex:1; text-align:center; }
-.vpair { display:flex; gap:7px; align-items:flex-end; justify-content:center; height:168px; }
-.vbar { width:26px; border-radius:6px 6px 0 0; position:relative; min-height:4px; }
-.vbar span { position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:12px; color:var(--ink); white-space:nowrap; }
+.vpair { display:flex; gap:8px; align-items:flex-end; justify-content:center; height:178px; }
+.vbar { width:36px; border-radius:6px 6px 0 0; position:relative; min-height:4px; }
+.vbar span { position:absolute; top:-26px; left:50%; transform:translateX(-50%); font-size:20px; color:var(--ink); white-space:nowrap; font-weight:700; }
 .vbar.b0 { background:#8fb0d4; }
 .vbar.r1 { background:#1a5fb4; }
-.vlbl { font-size:13px; line-height:1.35; color:var(--muted); margin-top:6px; }
-.hbar { display:grid; grid-template-columns: 168px 1fr 48px; gap:8px; align-items:center; margin:8px 0; font-size:14px; }
-.hbar .track { background: var(--wash); border-radius:999px; height:14px; overflow:hidden; }
-.hbar .fill { height:14px; border-radius:999px; background:#1a5fb4; }
-.legend { font-size:14px; color:var(--muted); margin: 4px 0 8px; }
+.vlbl { font-size:20px; line-height:1.3; color:var(--muted); margin-top:8px; font-weight:600; }
+.hbar { display:grid; grid-template-columns: 260px 1fr 80px; gap:12px; align-items:center; margin:10px 0; font-size:20px; font-weight:600; }
+.hbar .track { background: var(--wash); border-radius:999px; height:24px; overflow:hidden; }
+.hbar .fill { height:24px; border-radius:999px; background:#1a5fb4; }
+.legend { font-size:20px; color:var(--muted); margin: 4px 0 10px; }
 .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin:0 5px 0 10px; }
-.pager { text-align:right; font-size:13px; color:#7a93ad; margin-top:8px; }
+.pager { text-align:right; font-size:16px; color:#7a93ad; margin-top:8px; }
 .pills { display:flex; align-items:center; gap:8px; margin: 0 0 14px; flex-wrap:wrap; }
-.pill { padding:6px 14px; border-radius:999px; font-size:15px; border:1px solid var(--soft); background:#fff; color:var(--muted); }
+.pill { padding:6px 14px; border-radius:999px; font-size:18px; border:1px solid var(--soft); background:#fff; color:var(--muted); }
 .pill.on { background: var(--brand); border-color: var(--brand); color:#fff; font-weight:600; }
 .arr { color: var(--brand); font-size:16px; opacity:.5; }
 .brandbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:2px 0 12px; margin-bottom:8px; border-bottom:1px solid var(--soft); }
 .brand-left { display:flex; align-items:center; gap:12px; }
 .brand-left svg { width:34px; height:34px; display:block; }
-.brand-name { font-family:"Source Serif 4", serif; font-size:22px; font-weight:700; color:#1a5fb4; line-height:1; }
-.brand-tag { font-size:14px; color:var(--muted); margin-left:8px; font-weight:500; }
-.brand-sec { font-size:13px; color:var(--brand); font-weight:700; letter-spacing:.08em; }
+.brand-name { font-family:"Source Serif 4", serif; font-size:30px; font-weight:700; color:#1a5fb4; line-height:1; }
+.brand-tag { font-size:18px; color:var(--muted); margin-left:8px; font-weight:500; }
+.brand-sec { font-size:16px; color:var(--brand); font-weight:700; letter-spacing:.08em; }
 .app-frame { border:1px solid var(--soft); border-radius:16px; background:#fff; padding:14px 16px 12px; box-shadow: 0 8px 22px rgba(26,95,180,.07); }
-.app-bar { font-size:13px; color:var(--muted); margin-bottom:8px; font-weight:600; }
-.app-q { background: var(--wash); border-radius:10px; padding:10px 14px; font-size:16px; line-height:1.55; margin-bottom:12px; }
+.app-bar { font-size:16px; color:var(--muted); margin-bottom:8px; font-weight:600; }
+.app-q { background: var(--wash); border-radius:10px; padding:10px 14px; font-size:20px; line-height:1.5; margin-bottom:12px; }
 .app-metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px; }
 .app-metrics .metric-card { padding:12px 14px; }
-.app-metrics .v { font-size:24px; }
+.app-metrics .v { font-size:32px; }
 header[data-testid="stHeader"] { background: transparent; }
 .stDeployButton, #MainMenu, footer { display: none !important; }
-div[data-testid="stRadio"] label p { font-size: 16px !important; }
-div[data-testid="stWidgetLabel"] p { font-size: 16px !important; font-weight: 600 !important; color: var(--ink) !important; }
-.stButton button { font-size: 16px !important; border-radius: 12px !important; font-weight: 600 !important; }
-textarea, .stTextInput input { font-size: 16px !important; }
-h3 { font-size: 22px !important; }
+div[data-testid="stRadio"] label p { font-size: 20px !important; }
+div[data-testid="stWidgetLabel"] p { font-size: 20px !important; font-weight: 600 !important; color: var(--ink) !important; }
+.stButton button { font-size: 20px !important; border-radius: 12px !important; font-weight: 600 !important; }
+textarea, .stTextInput input { font-size: 20px !important; }
+h3 { font-size: 32px !important; }
 </style>
 """,
     unsafe_allow_html=True,
@@ -696,106 +696,134 @@ def _render_r1(
 
 
 def page_dashboard() -> None:
-    _hero(
-        "评测看板",
-        "MathXRay 评测看板",
-        "公开题上看「能不能指出最早错步」；私有高中题按来源拆开看，不能混成一个总分。",
-        show_flow=True,
-    )
+    section = str(st.query_params.get("dash", "all")).lower()
+    show_official = section not in {"private", "hs"}
+    show_private = section not in {"official", "public", "pb"}
+    if section in {"official", "public", "pb"}:
+        _hero(
+            "评测看板 · 公开集",
+            "MathXRay 评测看板",
+            "ProcessBench 上看三件事：能不能指出最早错步、能不能发现过程有错、会不会放过正确过程。",
+        )
+    elif section in {"private", "hs"}:
+        _hero(
+            "评测看板 · 私有集",
+            "MathXRay 评测看板",
+            "同一 88 道高中题上，一次判断和四段审查对照。不能混成一个总分。",
+        )
+    else:
+        _hero(
+            "评测看板",
+            "MathXRay 评测看板",
+            "公开题上看「能不能指出最早错步」；私有高中题按来源拆开看，不能混成一个总分。",
+            show_flow=True,
+        )
     data = _load_official()
-    if not data:
-        st.warning("尚未生成正式结果。请先运行 `python scripts/aggregate_official.py`。")
+    if show_official:
+        if not data:
+            st.warning("尚未生成正式结果。请先运行 `python scripts/aggregate_official.py`。")
+            if not show_private:
+                return
+        else:
+            m = data.get("metrics") or {}
+            ci = data.get("ci") or {}
+            cols = st.columns(4)
+            cards = [
+                ("指出最早错步", m.get("first_error_exact"), ci.get("first_error_exact", {}).get("fmt")),
+                ("发现过程有错", m.get("error_detection_recall"), ci.get("error_detection_recall", {}).get("fmt")),
+                ("放过正确过程", m.get("correct_process_accuracy"), ci.get("correct_process_accuracy", {}).get("fmt")),
+                ("三项综合", m.get("official_composite"), None),
+            ]
+            n_show = m.get("n_all", data.get("n"))
+            for col, (name, val, extra) in zip(cols, cards, strict=False):
+                with col:
+                    foot = extra or f"n={n_show}"
+                    st.markdown(
+                        f'<div class="metric-card"><div class="k">{name}</div>'
+                        f'<div class="v">{_fmt(val)}</div><div class="k">{foot}</div></div>',
+                        unsafe_allow_html=True,
+                    )
+
+            st.subheader("按数据集拆开看")
+            headers = ["数据集", "发现有错", "指出最早错步", "放过正确过程", "综合", "题数"]
+            body = []
+            for src, row in sorted((data.get("per_source") or {}).items()):
+                body.append(
+                    "<tr>"
+                    f"<td>{src}</td>"
+                    f"<td>{_fmt(row.get('error_detection_recall'))}</td>"
+                    f"<td>{_fmt(row.get('first_error_exact'))}</td>"
+                    f"<td>{_fmt(row.get('correct_process_accuracy'))}</td>"
+                    f"<td>{_fmt(row.get('official_composite'))}</td>"
+                    f"<td>{row.get('n_all')}</td>"
+                    "</tr>"
+                )
+            if body:
+                th = "".join(f"<th>{h}</th>" for h in headers)
+                st.markdown(
+                    f'<table class="cmp"><tr>{th}</tr>{"".join(body)}</table>',
+                    unsafe_allow_html=True,
+                )
+                bars = []
+                for src, row in sorted((data.get("per_source") or {}).items()):
+                    v = float(row.get("first_error_exact") or 0)
+                    bars.append(
+                        f'<div class="hbar"><div>{src}</div>'
+                        f'<div class="track"><div class="fill" style="width:{v * 100:.1f}%"></div></div>'
+                        f"<div>{v:.2f}</div></div>"
+                    )
+                st.markdown(
+                    '<div class="chart-card"><div class="cap">各数据集上，指出最早错步的比例</div>'
+                    f"{''.join(bars)}</div>",
+                    unsafe_allow_html=True,
+                )
+
+            if section not in {"official", "public", "pb"}:
+                dist = data.get("error_type_distribution") or {}
+                if dist:
+                    st.subheader("预测出来的错误类型")
+                    labels = data.get("error_type_labels") or ERROR_TYPE_LABELS
+                    mx = max(dist.values()) or 1
+                    bars = []
+                    for k, v in sorted(dist.items(), key=lambda kv: -kv[1]):
+                        name = labels.get(k, k)
+                        bars.append(
+                            f'<div class="hbar"><div>{name}</div>'
+                            f'<div class="track"><div class="fill" style="width:{v / mx * 100:.1f}%"></div></div>'
+                            f"<div>{v}</div></div>"
+                        )
+                    st.markdown(
+                        '<div class="chart-card"><div class="cap">模型给出的错误类型（题数）</div>'
+                        f"{''.join(bars)}</div>",
+                        unsafe_allow_html=True,
+                    )
+                uns = data.get("unsupported") or {}
+                if uns:
+                    st.subheader("答案对了，过程却撑不住")
+                    st.write(
+                        f"这类题有 **{uns.get('n_unsupported_answer')}** 道 · "
+                        f"抓出来的比例 **{_fmt(uns.get('unsupported_recall'))}**"
+                    )
+                bound = data.get("capability_boundary") or {}
+                if bound:
+                    st.info(
+                        f"能力边界：指出最早错步掉得最明显的一段，是 "
+                        f"{bound.get('from_difficulty')} ({bound.get('from')}) → "
+                        f"{bound.get('to_difficulty')} ({bound.get('to')})，"
+                        f"降了 {_fmt(bound.get('drop'))}。"
+                    )
+
+    if not show_private:
         return
-    m = data.get("metrics") or {}
-    ci = data.get("ci") or {}
-    cols = st.columns(4)
-    cards = [
-        ("指出最早错步", m.get("first_error_exact"), ci.get("first_error_exact", {}).get("fmt")),
-        ("发现过程有错", m.get("error_detection_recall"), ci.get("error_detection_recall", {}).get("fmt")),
-        ("放过正确过程", m.get("correct_process_accuracy"), ci.get("correct_process_accuracy", {}).get("fmt")),
-        ("三项综合", m.get("official_composite"), None),
-    ]
-    n_show = m.get("n_all", data.get("n"))
-    for col, (name, val, extra) in zip(cols, cards, strict=False):
-        with col:
-            foot = extra or f"n={n_show}"
-            st.markdown(
-                f'<div class="metric-card"><div class="k">{name}</div>'
-                f'<div class="v">{_fmt(val)}</div><div class="k">{foot}</div></div>',
-                unsafe_allow_html=True,
-            )
-
-    st.subheader("按数据集拆开看")
-    rows = []
-    for src, row in sorted((data.get("per_source") or {}).items()):
-        rows.append(
-            {
-                "数据集": src,
-                "发现有错": _fmt(row.get("error_detection_recall")),
-                "指出最早错步": _fmt(row.get("first_error_exact")),
-                "放过正确过程": _fmt(row.get("correct_process_accuracy")),
-                "综合": _fmt(row.get("official_composite")),
-                "题数": row.get("n_all"),
-            }
-        )
-    if rows:
-        st.dataframe(rows, use_container_width=True, hide_index=True)
-        bars = []
-        for src, row in sorted((data.get("per_source") or {}).items()):
-            v = float(row.get("first_error_exact") or 0)
-            bars.append(
-                f'<div class="hbar"><div>{src}</div>'
-                f'<div class="track"><div class="fill" style="width:{v * 100:.1f}%"></div></div>'
-                f"<div>{v:.2f}</div></div>"
-            )
-        st.markdown(
-            '<div class="chart-card"><div class="cap">各数据集上，指出最早错步的比例</div>'
-            f"{''.join(bars)}</div>",
-            unsafe_allow_html=True,
-        )
-
-    dist = data.get("error_type_distribution") or {}
-    if dist:
-        st.subheader("预测出来的错误类型")
-        labels = data.get("error_type_labels") or ERROR_TYPE_LABELS
-        mx = max(dist.values()) or 1
-        bars = []
-        for k, v in sorted(dist.items(), key=lambda kv: -kv[1]):
-            name = labels.get(k, k)
-            bars.append(
-                f'<div class="hbar"><div>{name}</div>'
-                f'<div class="track"><div class="fill" style="width:{v / mx * 100:.1f}%"></div></div>'
-                f"<div>{v}</div></div>"
-            )
-        st.markdown(
-            '<div class="chart-card"><div class="cap">模型给出的错误类型（题数）</div>'
-            f"{''.join(bars)}</div>",
-            unsafe_allow_html=True,
-        )
-
-    uns = data.get("unsupported") or {}
-    if uns:
-        st.subheader("答案对了，过程却撑不住")
-        st.write(
-            f"这类题有 **{uns.get('n_unsupported_answer')}** 道 · "
-            f"抓出来的比例 **{_fmt(uns.get('unsupported_recall'))}**"
-        )
-    bound = data.get("capability_boundary") or {}
-    if bound:
-        st.info(
-            f"能力边界：指出最早错步掉得最明显的一段，是 "
-            f"{bound.get('from_difficulty')} ({bound.get('from')}) → "
-            f"{bound.get('to_difficulty')} ({bound.get('to')})，"
-            f"降了 {_fmt(bound.get('drop'))}。"
-        )
-
     hs = _load_hs_compare()
     if hs:
-        st.markdown("---")
+        if show_official:
+            st.markdown("---")
         st.subheader("私有高中题集（本地，不外发）")
-        st.caption(
-            "约 4300 道高中题的冻结切片 n=88。没有逐步对错的人工标注；"
-            "答案对不上只说明过程有问题，改错样本才能看步号。"
+        st.markdown(
+            '<p class="slide-p">约 4300 道高中题的冻结切片 n=88。没有逐步对错的人工标注；'
+            "答案对不上只说明过程有问题，改错样本才能看步号。</p>",
+            unsafe_allow_html=True,
         )
         b0, r1 = hs.get("b0") or {}, hs.get("r1") or {}
         h1, h2, h3, h4 = st.columns(4)
@@ -813,12 +841,15 @@ def page_dashboard() -> None:
                     unsafe_allow_html=True,
                 )
         st.markdown(_hs_bars(), unsafe_allow_html=True)
-        st.info(
-            f"R1 在答案错误样本上的 1.00，大约 {r1.get('gate_flips')} 条是「答案已经对不上」这条规则改判的，"
-            f"逐步审查自己标错大约 {r1.get('stepwise_only_m1')}。"
-            "总账（调和平均）R1 0.50，略低于 B0 0.54：更会抓错，也更容易把官方详解判严。"
-        )
+        if section not in {"private", "hs"}:
+            st.info(
+                f"R1 在答案错误样本上的 1.00，大约 {r1.get('gate_flips')} 条是「答案已经对不上」这条规则改判的，"
+                f"逐步审查自己标错大约 {r1.get('stepwise_only_m1')}。"
+                "总账（调和平均）R1 0.50，略低于 B0 0.54：更会抓错，也更容易把官方详解判严。"
+            )
 
+    if section in {"private", "hs"}:
+        return
     full_path = OFFICIAL_DIR / "processbench_full_replay.json"
     if full_path.exists():
         full = json.loads(full_path.read_text(encoding="utf-8"))
@@ -1007,11 +1038,11 @@ def _svg_pb_line() -> str:
     grid = "".join(
         f'<line x1="70" y1="{yy(v):.1f}" x2="680" y2="{yy(v):.1f}" '
         f'stroke="#e5e7eb" /><text x="8" y="{yy(v) + 4:.1f}" fill="#9ca3af" '
-        f'font-size="11">{v:.2f}</text>'
+        f'font-size="20">{v:.2f}</text>'
         for v in (0.60, 0.70, 0.80, 0.90, 1.00)
     )
     ticks = "".join(
-        f'<text x="{x}" y="228" text-anchor="middle" fill="#4b5563" font-size="12">{n}</text>'
+        f'<text x="{x}" y="228" text-anchor="middle" fill="#4b5563" font-size="22">{n}</text>'
         for x, n in zip(xs, names)
     )
     paths = []
@@ -1080,7 +1111,7 @@ def _svg_radar() -> str:
         axes.append(f'<line x1="{cx}" y1="{cy}" x2="{x:.1f}" y2="{y:.1f}" stroke="#e5e7eb"/>')
         lx, ly = pt(i, 1.22)
         labs.append(
-            f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="middle" font-size="12" fill="#374151">{name}</text>'
+            f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="middle" font-size="22" fill="#374151">{name}</text>'
         )
 
     def poly(

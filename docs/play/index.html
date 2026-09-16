@@ -33,99 +33,82 @@
     }
     .wrap {
       position: relative; z-index: 1;
-      max-width: 1280px; margin: 0 auto; height: 100%;
-      padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px;
+      width: 100%; height: 100%;
+      padding: 0; display: flex; flex-direction: column; gap: 0;
     }
-    header {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    }
-    .brand { display: flex; align-items: center; gap: 10px; }
-    .brand svg { width: 32px; height: 32px; display: block; filter: drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
-    .brand h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
-    .brand span { display: block; font-size: 12px; opacity: .75; font-weight: 500; }
-    .hint { font-size: 13px; color: var(--soft); }
     .stage-card {
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(197,216,240,.25);
-      border-radius: 18px;
-      padding: 10px;
-      box-shadow: 0 24px 60px rgba(0,0,0,.28);
-      backdrop-filter: blur(16px);
+      background: #0b1e33;
       flex: 1; min-height: 0; display: flex; flex-direction: column;
     }
     .stage {
       position: relative; width: 100%; flex: 1; min-height: 0;
-      background: #0b1e33; border-radius: 12px; overflow: hidden;
+      background: #f4f7fc; overflow: hidden;
     }
     .stage img {
-      width: 100%; height: 100%; object-fit: contain; display: block;
-      background: #f4f7fc;
+      width: 100%; height: 100%; object-fit: contain; object-position: center top;
+      display: block; background: #f4f7fc;
     }
     .bar {
-      margin-top: 10px;
-      background: linear-gradient(180deg, rgba(26,95,180,.95), #134a8c);
-      border-radius: 14px;
-      padding: 10px 12px 12px;
+      flex: 0 0 auto;
+      display: flex; align-items: center; gap: 8px;
+      background: linear-gradient(180deg, rgba(26,95,180,.97), #134a8c);
+      padding: 6px 10px;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
     }
+    .brand {
+      display: flex; align-items: center; gap: 8px; flex: 0 0 auto;
+    }
+    .brand svg { width: 22px; height: 22px; display: block; }
+    .brand h1 { margin: 0; font-size: 15px; letter-spacing: -.02em; font-weight: 700; }
     .scrub {
-      -webkit-appearance: none; appearance: none; width: 100%; height: 8px;
+      -webkit-appearance: none; appearance: none; flex: 1; min-width: 80px; height: 6px;
       border-radius: 999px; background: rgba(197,216,240,.28); outline: none; cursor: pointer;
     }
     .scrub::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
-      background: #fff; border: 3px solid #c5d8f0; box-shadow: 0 2px 8px rgba(0,0,0,.3);
-    }
-    .row {
-      display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+      -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+      background: #fff; border: 2px solid #c5d8f0; box-shadow: 0 1px 4px rgba(0,0,0,.3);
     }
     .btn {
-      width: 44px; height: 44px; border: 0; border-radius: 12px; cursor: pointer;
-      background: rgba(255,255,255,.14); color: #fff; font-size: 18px;
-      display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border: 0; border-radius: 8px; cursor: pointer;
+      background: rgba(255,255,255,.14); color: #fff; font-size: 15px;
+      display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
     }
     .btn:hover { background: rgba(255,255,255,.26); }
-    .btn.play { width: 56px; background: #fff; color: var(--brand); font-size: 20px; font-weight: 700; }
+    .btn.play { width: 42px; background: #fff; color: var(--brand); font-size: 16px; font-weight: 700; }
     .btn.play:hover { background: var(--soft); }
-    .meta { flex: 1; min-width: 180px; padding-left: 6px; }
-    .meta .t { font-size: 15px; font-weight: 700; }
-    .meta .n { font-size: 12px; color: var(--soft); margin-top: 2px; }
+    .meta { flex: 0 1 280px; min-width: 120px; }
+    .meta .t { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .meta .n { font-size: 11px; color: var(--soft); }
     kbd {
       font: 11px ui-monospace, monospace; border: 1px solid rgba(197,216,240,.4);
-      border-radius: 6px; padding: 1px 6px; color: var(--soft);
+      border-radius: 6px; padding: 1px 5px; color: var(--soft);
     }
+    .hint { font-size: 11px; color: var(--soft); white-space: nowrap; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <div class="brand">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
-          <rect width="32" height="32" rx="8" fill="#1a5fb4"/>
-          <path d="M16 5 L27 16 L16 27 L5 16 Z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
-          <circle cx="16" cy="16" r="3.2" fill="#fff"/>
-          <path d="M16 9.5 V13.2 M16 18.8 V22.5 M9.5 16 H13.2 M18.8 16 H22.5" stroke="#c5d8f0" stroke-width="1.4" stroke-linecap="round"/>
-        </svg>
-        <div>
-          <h1>MathXRay</h1>
-          <span>演示回放 · 可暂停、前进、后退</span>
-        </div>
-      </div>
-      <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页　<kbd>空格</kbd> 播放/暂停</div>
-    </header>
     <div class="stage-card">
       <div class="stage"><img id="frame" alt="MathXRay 演示帧" /></div>
       <div class="bar">
-        <input class="scrub" id="scrub" type="range" min="0" max="30" value="0" />
-        <div class="row">
-          <button class="btn" id="prev" title="上一页">⏮</button>
-          <button class="btn play" id="play" title="播放/暂停">⏸</button>
-          <button class="btn" id="next" title="下一页">⏭</button>
-          <div class="meta">
-            <div class="t" id="title">演示</div>
-            <div class="n" id="count">1 / 31</div>
-          </div>
+        <div class="brand">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#1a5fb4"/>
+            <path d="M16 5 L27 16 L16 27 L5 16 Z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+            <circle cx="16" cy="16" r="3.2" fill="#fff"/>
+            <path d="M16 9.5 V13.2 M16 18.8 V22.5 M9.5 16 H13.2 M18.8 16 H22.5" stroke="#c5d8f0" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <h1>MathXRay</h1>
         </div>
+        <button class="btn" id="prev" title="上一页">⏮</button>
+        <button class="btn play" id="play" title="播放/暂停">⏸</button>
+        <button class="btn" id="next" title="下一页">⏭</button>
+        <input class="scrub" id="scrub" type="range" min="0" max="30" value="0" />
+        <div class="meta">
+          <div class="t" id="title">演示</div>
+          <div class="n" id="count">1 / 31</div>
+        </div>
+        <div class="hint"><kbd>←</kbd> <kbd>→</kbd> <kbd>空格</kbd></div>
       </div>
     </div>
   </div>

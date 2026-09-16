@@ -152,8 +152,13 @@ window.MX_DEMO = {
     },
     {
       "src": "frames/30.jpg",
-      "ms": 7000,
-      "title": "评测看板"
+      "ms": 8000,
+      "title": "公开评测看板"
+    },
+    {
+      "src": "frames/31.jpg",
+      "ms": 8000,
+      "title": "私有集对照"
     }
   ]
 };
