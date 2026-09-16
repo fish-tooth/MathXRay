@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import time
 from pathlib import Path
 
 import streamlit as st
@@ -29,87 +30,155 @@ st.set_page_config(page_title="MathXRay", page_icon="◇", layout="wide")
 st.markdown(
     """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Noto+Sans+SC:wght@400;500;600&display=swap');
-:root { --brand:#1a5fb4; --ok:#188a52; --bad:#c0392b; --warn:#b45309; --line:#e5e7eb; }
-html, body, [class*="css"] { font-family: "Noto Sans SC", "Segoe UI", sans-serif; }
-.block-container { padding-top: 1.2rem; max-width: 1180px; }
-h1, h2, h3 { font-family: "Source Serif 4", "Noto Serif SC", serif; }
-.mx-hero { padding: 8px 0 18px; border-bottom: 1px solid rgba(128,128,128,.28); margin-bottom: 18px; }
-.mx-hero-row { display:flex; align-items:center; gap:12px; }
-.mx-logo { width:36px; height:36px; flex-shrink:0; }
-.mx-kicker { color: var(--brand); font-weight: 600; letter-spacing: .04em; font-size: 13px; }
-.mx-title { font-size: 34px; margin: 4px 0; }
-.mx-sub { opacity: .78; font-size: 16px; }
-.badge { display:inline-block; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; }
-.badge-ok { background:#e8f7ee; color: var(--ok); }
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+:root {
+  --brand:#1a5fb4; --brand-dark:#134a8c; --soft:#c5d8f0; --wash:#e8f0fa;
+  --ink:#163a5f; --muted:#4a6a8a; --paper:#f4f7fc; --card:#fff;
+  --ok:#1b7a4e; --bad:#c0392b; --warn:#b45309; --line:#c5d8f0;
+}
+html, body, [class*="css"], .stApp { font-family: "Noto Sans SC", "Segoe UI", sans-serif; color: var(--ink); }
+.stApp {
+  background:
+    radial-gradient(920px 520px at 6% -12%, rgba(26,95,180,.28), transparent 58%),
+    radial-gradient(640px 380px at 96% 4%, rgba(197,216,240,.95), transparent 52%),
+    radial-gradient(720px 460px at 78% 108%, rgba(26,95,180,.16), transparent 58%),
+    linear-gradient(165deg, #dbe8f7 0%, #f4f7fc 38%, #e7f0fa 100%);
+}
+.stApp::before {
+  content: "";
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(26,95,180,.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,95,180,.055) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at 50% 0%, #000 18%, transparent 72%);
+  animation: griddrift 26s linear infinite;
+}
+.stApp::after {
+  content: "";
+  position: fixed; pointer-events: none; z-index: 0;
+  width: 480px; height: 480px; right: -120px; top: -80px;
+  background: radial-gradient(circle, rgba(255,255,255,.65) 0%, rgba(26,95,180,.16) 42%, transparent 70%);
+  filter: blur(6px);
+  animation: floaty 14s ease-in-out infinite;
+}
+@keyframes griddrift { to { background-position: 44px 44px, 44px 44px; } }
+@keyframes floaty { 50% { transform: translate(-28px, 22px) scale(1.08); } }
+.block-container { padding-top: 1.1rem; max-width: 1180px; position: relative; z-index: 1; }
+h1, h2, h3 { font-family: "Source Serif 4", "Noto Serif SC", serif; color: var(--ink); }
+p, li, label { font-size: 16px; line-height: 1.65; }
+[data-testid="stSidebar"] { background: linear-gradient(180deg, #e8f0fa 0%, #f4f7fc 40%); border-right: 1px solid var(--soft); }
+[data-testid="stSidebar"] p, [data-testid="stSidebar"] label { font-size: 15px; }
+.mx-hero { padding: 4px 0 16px; margin-bottom: 16px; }
+.mx-hero-row { display:flex; align-items:center; gap:14px; }
+.mx-logo { width:44px; height:44px; flex-shrink:0; filter: drop-shadow(0 4px 10px rgba(26,95,180,.28)); }
+.mx-logo svg { width:44px; height:44px; }
+.mx-kicker { color: var(--brand); font-weight: 700; letter-spacing: .12em; font-size: 12px; }
+.mx-title { font-size: 36px; margin: 2px 0 6px; letter-spacing: -.02em; }
+.mx-sub { color: var(--muted); font-size: 17px; line-height: 1.6; }
+.pipeline { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin: 14px 0 4px; }
+.pipe { display:flex; align-items:center; gap:8px; background: rgba(255,255,255,.88); border:1px solid var(--soft);
+  border-radius:999px; padding:7px 14px 7px 8px; font-size:15px; font-weight:600; color: var(--ink);
+  box-shadow: 0 6px 16px rgba(26,95,180,.10); backdrop-filter: blur(8px); }
+.pipe span { width:24px; height:24px; border-radius:50%; background: var(--brand); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-size:13px; }
+.pipe-arr { color: var(--brand); font-size:18px; opacity:.55; }
+.badge { display:inline-block; padding: 4px 12px; border-radius: 999px; font-size: 14px; font-weight: 600; }
+.badge-ok { background:#e5f6ec; color: var(--ok); }
 .badge-bad { background:#fdecea; color: var(--bad); }
-.badge-warn { background:#fff7ed; color: var(--warn); }
-.step { border: 1px solid rgba(128,128,128,.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; }
-.step.root { border-color: #e35d5d; background: rgba(192, 57, 43, 0.18); }
-.step.prop { border-color: #e2b36a; background: rgba(180, 83, 9, 0.16); }
-.metric-card { border: 1px solid rgba(128,128,128,.35); border-radius: 12px; padding: 14px 16px; }
-.metric-card .v { font-size: 28px; font-weight: 700; font-variant-numeric: tabular-nums; }
-.metric-card .k { opacity: .7; font-size: 13px; }
-.warn-banner { background: rgba(180, 83, 9, 0.18); border:1px solid #fdba74; border-radius:12px; padding:12px 16px; }
-.step.invalid { border-color:#c0392b; background: rgba(192, 57, 43, 0.16); }
-.step.unknown { border-color:#b45309; background: rgba(180, 83, 9, 0.14); }
-.stage { border-left:3px solid var(--brand); padding:2px 0 2px 12px; margin-bottom:14px; }
-.stage .h { font-weight:600; font-size:15px; }
-.verdict { font-size:12px; font-weight:700; padding:2px 8px; border-radius:999px; }
-.v-valid { background:#e8f7ee; color: var(--ok); }
+.badge-warn { background:#fff4e5; color: var(--warn); }
+.step { border: 1px solid rgba(197,216,240,.9); background: rgba(255,255,255,.8); border-radius: 14px;
+  padding: 14px 16px; margin-bottom: 10px; font-size:16px; line-height:1.6;
+  box-shadow: 0 8px 20px rgba(26,95,180,.07); backdrop-filter: blur(10px); }
+.step.root, .step.invalid { border-color: #f0b4ae; background: #fff5f4; }
+.step.prop, .step.unknown { border-color: #f0d2a8; background: #fff8ee; }
+.metric-card { border: 1px solid rgba(197,216,240,.9); background: rgba(255,255,255,.78);
+  border-radius: 16px; padding: 16px 18px; backdrop-filter: blur(12px);
+  box-shadow: 0 10px 28px rgba(26,95,180,.10), inset 0 1px 0 rgba(255,255,255,.8); }
+.metric-card .v { font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
+.metric-card .k { color: var(--muted); font-size: 14px; font-weight: 600; }
+.warn-banner { background: #fff8ee; border:1px solid #f0d2a8; border-radius:14px; padding:14px 18px; font-size:16px; color: var(--ink); }
+.stage { background: rgba(255,255,255,.8); border:1px solid rgba(197,216,240,.9); border-radius:16px;
+  padding:16px 18px 12px; margin-bottom:14px; backdrop-filter: blur(12px);
+  box-shadow: 0 10px 26px rgba(26,95,180,.08); }
+.stage .h { font-weight:700; font-size:18px; color: var(--brand-dark); display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.stage .h .n { width:28px; height:28px; border-radius:50%; background: var(--brand); color:#fff; font-size:14px;
+  display:inline-flex; align-items:center; justify-content:center; }
+.stage .hint { font-size:15px; color: var(--muted); margin-bottom:10px; }
+.verdict { font-size:13px; font-weight:700; padding:3px 10px; border-radius:999px; }
+.v-valid { background:#e5f6ec; color: var(--ok); }
 .v-invalid { background:#fdecea; color: var(--bad); }
-.v-unknown { background:#fff7ed; color: var(--warn); }
-.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
-.slide { padding: 2px 2px 8px; }
-.slide-kicker { color: var(--brand); font-weight: 600; letter-spacing: .08em; font-size: 12px; }
-.slide-title { font-family: "Source Serif 4", serif; font-size: 26px; margin: 4px 0 8px; line-height: 1.25; }
-.slide-lead { font-size: 16px; line-height: 1.7; opacity: .9; margin-bottom: 12px; }
-.slide-p { font-size: 14.5px; line-height: 1.7; color:#374151; margin: 0 0 10px; }
-.flow-box { background:#fff; border:1px solid var(--line); border-radius:12px; padding:10px 14px; margin-bottom:8px; font-size:14.5px; line-height:1.6; }
+.v-unknown { background:#fff4e5; color: var(--warn); }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; color: var(--muted); }
+.slide { padding: 2px 2px 8px; position: relative; }
+.slide::after {
+  content: "◇"; position: absolute; right: 4px; top: 36px; font-size: 132px; line-height: 1;
+  color: rgba(26,95,180,.07); transform: rotate(16deg); pointer-events: none; font-family: Georgia, serif;
+}
+.slide-title { font-family: "Source Serif 4", serif; font-size: 30px; margin: 6px 0 10px; line-height: 1.3; color: var(--ink); }
+.slide-lead { font-size: 17px; line-height: 1.7; color: var(--muted); margin-bottom: 14px; }
+.slide-p { font-size: 16px; line-height: 1.7; color: var(--ink); margin: 0 0 10px; }
+.flow-box { background: rgba(255,255,255,.8); border:1px solid rgba(197,216,240,.9); border-radius:14px;
+  padding:12px 16px; margin-bottom:10px; font-size:16px; line-height:1.65;
+  box-shadow: 0 8px 18px rgba(26,95,180,.07); backdrop-filter: blur(10px); }
 .flow-box b { color: var(--brand); }
-.flow-box.active { border-color: var(--brand); background:#eef4fb; }
-.flow-box.warn { border-color:#e2b36a; background:#fff7ed; }
-.flow-box.bad { border-color:#e35d5d; background:#fdecea; }
-.flow-box.ok { border-color:#3da36a; background:#e8f7ee; }
-.tiny { font-size:13px; opacity:.78; line-height:1.55; margin-top:4px; }
-.cmp { border-collapse: collapse; width:100%; background:#fff; border-radius:12px; overflow:hidden; }
-.cmp th { background:#eef2f7; font-size:13px; padding:8px 10px; text-align:left; color:#4b5563; }
-.cmp td { border-top:1px solid var(--line); font-size:14.5px; padding:8px 10px; }
-.kv { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-.kv3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; }
-.two { display:grid; grid-template-columns: 1.15fr 0.85fr; gap:12px; align-items:start; }
-.chart-card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:8px 12px 6px; }
-.chart-card .cap { font-size:13px; color:#4b5563; margin: 2px 0 6px; }
+.flow-box.active { border-color: var(--brand); background: var(--wash); }
+.flow-box.warn { border-color:#f0d2a8; background:#fff8ee; }
+.flow-box.bad { border-color:#f0b4ae; background:#fff5f4; }
+.flow-box.ok { border-color:#b7e0c6; background:#eef8f2; }
+.tiny { font-size:14px; color: var(--muted); line-height:1.55; margin-top:4px; }
+.cmp { border-collapse: collapse; width:100%; background:#fff; border-radius:14px; overflow:hidden; box-shadow: 0 6px 16px rgba(26,95,180,.05); }
+.cmp th { background: var(--wash); font-size:14px; padding:10px 12px; text-align:left; color: var(--muted); }
+.cmp td { border-top:1px solid var(--soft); font-size:16px; padding:10px 12px; }
+.kv { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+.kv3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px; }
+.two { display:grid; grid-template-columns: 1.15fr 0.85fr; gap:14px; align-items:start; }
+.chart-card { background: rgba(255,255,255,.82); border:1px solid rgba(197,216,240,.9); border-radius:14px;
+  padding:10px 14px 8px; backdrop-filter: blur(10px); }
+.transport {
+  display:flex; align-items:center; gap:10px; margin-top: 18px; padding: 10px 12px;
+  background: linear-gradient(90deg, #1a5fb4 0%, #2b74c9 55%, #1a5fb4 100%);
+  border-radius: 999px; box-shadow: 0 12px 28px rgba(26,95,180,.28); color:#fff;
+}
+.transport button { font: inherit; }
+.chart-card .cap { font-size:14px; color: var(--muted); margin: 2px 0 6px; }
 .vbars { display:flex; gap:22px; align-items:flex-end; height:210px; padding: 8px 8px 0; }
 .vgroup { flex:1; text-align:center; }
 .vpair { display:flex; gap:7px; align-items:flex-end; justify-content:center; height:168px; }
 .vbar { width:26px; border-radius:6px 6px 0 0; position:relative; min-height:4px; }
-.vbar span { position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:11px; color:#374151; white-space:nowrap; }
-.vbar.b0 { background:#94a3b8; }
+.vbar span { position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:12px; color:var(--ink); white-space:nowrap; }
+.vbar.b0 { background:#8fb0d4; }
 .vbar.r1 { background:#1a5fb4; }
-.vlbl { font-size:12px; line-height:1.35; color:#4b5563; margin-top:6px; }
-.hbar { display:grid; grid-template-columns: 168px 1fr 28px; gap:8px; align-items:center; margin:7px 0; font-size:13px; }
-.hbar .track { background:#eef2f7; border-radius:999px; height:12px; overflow:hidden; }
-.hbar .fill { height:12px; border-radius:999px; background:#1a5fb4; }
-.legend { font-size:12px; color:#4b5563; margin: 4px 0 8px; }
+.vlbl { font-size:13px; line-height:1.35; color:var(--muted); margin-top:6px; }
+.hbar { display:grid; grid-template-columns: 168px 1fr 48px; gap:8px; align-items:center; margin:8px 0; font-size:14px; }
+.hbar .track { background: var(--wash); border-radius:999px; height:14px; overflow:hidden; }
+.hbar .fill { height:14px; border-radius:999px; background:#1a5fb4; }
+.legend { font-size:14px; color:var(--muted); margin: 4px 0 8px; }
 .legend i { display:inline-block; width:10px; height:10px; border-radius:2px; margin:0 5px 0 10px; }
-.pager { text-align:right; font-size:12px; color:#9ca3af; margin-top:8px; }
-.pills { display:flex; align-items:center; gap:8px; margin: 0 0 12px; flex-wrap:wrap; }
-.pill { padding:4px 12px; border-radius:999px; font-size:13px; border:1px solid var(--line); background:#fff; color:#4b5563; }
-.pill.on { background:#eef4fb; border-color: var(--brand); color: var(--brand); font-weight:600; }
-.arr { color:#9ca3af; font-size:13px; }
-.brandbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 0 10px; margin-bottom:10px; border-bottom:1px solid var(--line); }
-.brand-left { display:flex; align-items:center; gap:10px; }
-.brand-left svg { width:28px; height:28px; display:block; }
-.brand-name { font-family:"Source Serif 4", serif; font-size:20px; font-weight:700; color:#1a5fb4; line-height:1; }
-.brand-tag { font-size:12px; color:#6b7280; margin-left:8px; font-weight:500; }
-.brand-sec { font-size:12px; color:var(--brand); font-weight:600; letter-spacing:.06em; }
-.app-frame { border:1px solid var(--line); border-radius:14px; background:#fff; padding:12px 14px 10px; }
-.app-bar { font-size:12px; color:#6b7280; margin-bottom:8px; }
-.app-q { background:#f7f8fb; border-radius:8px; padding:8px 12px; font-size:14px; line-height:1.55; margin-bottom:10px; }
-.app-metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:10px; }
-.app-metrics .metric-card { padding:10px 12px; }
-.app-metrics .v { font-size:22px; }
+.pager { text-align:right; font-size:13px; color:#7a93ad; margin-top:8px; }
+.pills { display:flex; align-items:center; gap:8px; margin: 0 0 14px; flex-wrap:wrap; }
+.pill { padding:6px 14px; border-radius:999px; font-size:15px; border:1px solid var(--soft); background:#fff; color:var(--muted); }
+.pill.on { background: var(--brand); border-color: var(--brand); color:#fff; font-weight:600; }
+.arr { color: var(--brand); font-size:16px; opacity:.5; }
+.brandbar { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:2px 0 12px; margin-bottom:8px; border-bottom:1px solid var(--soft); }
+.brand-left { display:flex; align-items:center; gap:12px; }
+.brand-left svg { width:34px; height:34px; display:block; }
+.brand-name { font-family:"Source Serif 4", serif; font-size:22px; font-weight:700; color:#1a5fb4; line-height:1; }
+.brand-tag { font-size:14px; color:var(--muted); margin-left:8px; font-weight:500; }
+.brand-sec { font-size:13px; color:var(--brand); font-weight:700; letter-spacing:.08em; }
+.app-frame { border:1px solid var(--soft); border-radius:16px; background:#fff; padding:14px 16px 12px; box-shadow: 0 8px 22px rgba(26,95,180,.07); }
+.app-bar { font-size:13px; color:var(--muted); margin-bottom:8px; font-weight:600; }
+.app-q { background: var(--wash); border-radius:10px; padding:10px 14px; font-size:16px; line-height:1.55; margin-bottom:12px; }
+.app-metrics { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px; }
+.app-metrics .metric-card { padding:12px 14px; }
+.app-metrics .v { font-size:24px; }
+header[data-testid="stHeader"] { background: transparent; }
+.stDeployButton, #MainMenu, footer { display: none !important; }
+div[data-testid="stRadio"] label p { font-size: 16px !important; }
+div[data-testid="stWidgetLabel"] p { font-size: 16px !important; font-weight: 600 !important; color: var(--ink) !important; }
+.stButton button { font-size: 16px !important; border-radius: 12px !important; font-weight: 600 !important; }
+textarea, .stTextInput input { font-size: 16px !important; }
+h3 { font-size: 22px !important; }
 </style>
 """,
     unsafe_allow_html=True,
@@ -154,13 +223,25 @@ LOGO_SVG = (
 )
 
 
-def _hero(kicker: str, title: str, sub: str) -> None:
+def _pipeline_html() -> str:
+    steps = ["写出步骤", "核对答案", "审查过程", "给出结论"]
+    bits = []
+    for i, name in enumerate(steps, start=1):
+        bits.append(f'<div class="pipe"><span>{i}</span>{name}</div>')
+        if i < len(steps):
+            bits.append('<div class="pipe-arr">→</div>')
+    return f'<div class="pipeline">{"".join(bits)}</div>'
+
+
+def _hero(kicker: str, title: str, sub: str, *, show_flow: bool = False) -> None:
+    flow = _pipeline_html() if show_flow else ""
     st.markdown(
         f'<div class="mx-hero"><div class="mx-hero-row">'
         f'<div class="mx-logo">{LOGO_SVG}</div><div>'
         f'<div class="mx-kicker">{kicker}</div>'
         f'<div class="mx-title">{title}</div>'
         f'<div class="mx-sub">{sub}</div>'
+        f"{flow}"
         f"</div></div></div>",
         unsafe_allow_html=True,
     )
@@ -171,7 +252,7 @@ def _badge(ok: bool | None, yes: str, no: str) -> str:
         return f'<span class="badge badge-ok">{yes}</span>'
     if ok is False:
         return f'<span class="badge badge-bad">{no}</span>'
-    return '<span class="badge">UNKNOWN</span>'
+    return '<span class="badge">说不清</span>'
 
 
 def _fmt(v) -> str:
@@ -184,9 +265,10 @@ def _fmt(v) -> str:
 
 def page_solve() -> None:
     _hero(
-        "SOLVE &amp; AUDIT",
+        "解题与审查",
         "MathXRay",
-        "Hy3 写出步骤；R1 先独立做一遍，再逐段审查，必要时进入指控 / 辩护 / 仲裁，最后按固定规则汇总。",
+        "先把题做出来，再看步骤对不对。错了就标出从哪一步开始错。",
+        show_flow=True,
     )
     q_engine = str(st.query_params.get("demo_engine", "") or st.query_params.get("engine", "")).lower()
     raw_case = st.query_params.get("demo_case", st.query_params.get("case", None))
@@ -233,18 +315,18 @@ def page_solve() -> None:
         return
 
     engine = st.radio(
-        "评估引擎",
-        ["R1 反思式审查", "B0 混合审查"],
+        "用哪套审查",
+        ["四段审查（推荐）", "一次判断"],
         horizontal=True,
     )
-    use_r1 = engine.startswith("R1")
+    use_r1 = engine.startswith("四段")
     mode = st.radio(
-        "输入方式",
-        ["演示案例", "现场调用 Hy3"],
+        "怎么用",
+        ["看演示例子", "现场调用 Hy3"],
         horizontal=True,
     )
 
-    if mode.startswith("演示"):
+    if mode.startswith("看演示"):
         if use_r1:
             cases = _load_demo_r1()
             if not cases:
@@ -254,7 +336,7 @@ def page_solve() -> None:
                 )
                 return
             labels = [c["title"] for c in cases]
-            idx = st.radio("选择案例", range(len(labels)), format_func=lambda i: labels[i])
+            idx = st.radio("选一道题", range(len(labels)), format_func=lambda i: labels[i])
             case = cases[idx]
             st.text_area("题目", case["problem"], height=90, disabled=True)
             _render_r1(
@@ -274,8 +356,8 @@ def page_solve() -> None:
             default_case = max(0, min(len(cases) - 1, int(st.query_params.get("case", 0))))
         except (TypeError, ValueError):
             default_case = 0
-        idx = st.radio(
-            "选择案例",
+            idx = st.radio(
+            "选一道题",
             range(len(labels)),
             index=default_case,
             format_func=lambda i: labels[i],
@@ -300,7 +382,7 @@ def page_solve() -> None:
 
     problem = st.text_area("输入数学题", height=120, placeholder="例如：半径为 3 的圆的面积是多少？")
     gold = st.text_input("标准答案")
-    if st.button("求解并审计", type="primary", disabled=not problem.strip()):
+    if st.button("开始审查", type="primary", disabled=not problem.strip()):
         try:
             config = load_config(ROOT / "configs" / "default.yaml")
             if use_r1:
@@ -379,29 +461,29 @@ def _render_audit(
         st.markdown(
             f'<div class="metric-card"><div class="k">过程判定</div>'
             f'<div class="v">{label}</div>'
-            f'{_badge(process_correct, "Process ✓", "Process ✗")}</div>',
+            f'{_badge(process_correct, "过程成立", "过程不成立")}</div>',
             unsafe_allow_html=True,
         )
     with c3:
-        first = first_error or "—"
+        first = f"第 {first_error} 步" if first_error else "没有发现错误"
         etype = ERROR_TYPE_LABELS.get(error_type or "", error_type or "无")
         st.markdown(
-            f'<div class="metric-card"><div class="k">最早错误 / 根因</div>'
-            f'<div class="v">Step {first}</div>'
+            f'<div class="metric-card"><div class="k">最早出错的一步</div>'
+            f'<div class="v">{first}</div>'
             f'<span class="badge">{etype}</span></div>',
             unsafe_allow_html=True,
         )
     if unsupported:
         st.markdown(
-            '<div class="warn-banner"><b>Unsupported Answer</b>：最终答案正确，'
-            "但推理过程无法支撑该结论。</div>",
+            '<div class="warn-banner"><b>答案对了，过程撑不住</b>：'
+            "最后数字对得上，但中间推理没法推出这个结论。</div>",
             unsafe_allow_html=True,
         )
-    extra = f" · 置信度 {confidence}" if confidence else ""
+    extra = f" · 把握 {confidence}" if confidence else ""
     st.caption((reason or "") + extra)
     if confidence == "Low":
-        st.info("建议人工复核：符号证据与语义审查不一致。")
-    st.subheader("逐步审计")
+        st.info("建议再看一眼：能算出来的结果，和文字判断对不上。")
+    st.subheader("一步一步看")
     meta_by_id = {}
     for item in step_meta:
         if isinstance(item, dict):
@@ -424,11 +506,15 @@ def _render_audit(
             expression = step.expression
         meta = meta_by_id.get(sid, {})
         tag = meta.get("tag", "NONE")
+        tag_label = {"ROOT": "最早出错", "PROPAGATED": "跟着错", "INDEPENDENT": "另有问题"}.get(tag, "")
         klass = "root" if tag == "ROOT" else "prop" if tag == "PROPAGATED" else ""
         fused = meta.get("fused", "")
+        fused_label = {"VALID": "成立", "INVALID": "有错", "UNKNOWN": "说不清"}.get(str(fused).upper(), fused)
         expr_html = f" &nbsp; <code>{expression}</code>" if expression else ""
+        tag_bit = f" · {tag_label}" if tag_label else ""
+        fused_bit = f" · {fused_label}" if fused_label else ""
         st.markdown(
-            f'<div class="step {klass}"><b>Step {sid}</b> · {tag} · {fused}<br>'
+            f'<div class="step {klass}"><b>第 {sid} 步</b>{tag_bit}{fused_bit}<br>'
             f"{statement}{expr_html}</div>",
             unsafe_allow_html=True,
         )
@@ -460,7 +546,7 @@ def _render_live(result) -> None:
 def _verdict_badge(verdict: str) -> str:
     v = (verdict or "").upper()
     cls = "v-valid" if v == "VALID" else "v-invalid" if v == "INVALID" else "v-unknown"
-    return f'<span class="verdict {cls}">{v or "N/A"}</span>'
+    return f'<span class="verdict {cls}">{ {"VALID": "成立", "INVALID": "有错", "UNKNOWN": "说不清"}.get(v, v or "—") }</span>'
 
 
 def _render_r1(
@@ -493,40 +579,39 @@ def _render_r1(
         st.markdown(
             f'<div class="metric-card"><div class="k">过程判定</div>'
             f'<div class="v">{label}</div>'
-            f'{_badge(process_correct, "Process ✓", "Process ✗")}</div>',
+            f'{_badge(process_correct, "过程成立", "过程不成立")}</div>',
             unsafe_allow_html=True,
         )
     with c3:
         etype = ERROR_TYPE_LABELS.get(error_type or "", error_type or "无")
+        first = f"第 {first_error} 步" if first_error else "没有发现错误"
         st.markdown(
-            f'<div class="metric-card"><div class="k">最早错误 / 类型</div>'
-            f'<div class="v">Step {first_error or "—"}</div>'
+            f'<div class="metric-card"><div class="k">最早出错的一步</div>'
+            f'<div class="v">{first}</div>'
             f'<span class="badge">{etype}</span></div>',
             unsafe_allow_html=True,
         )
 
     if unsupported:
         st.markdown(
-            '<div class="warn-banner"><b>Unsupported Answer</b>：最终答案正确，'
-            "但推理过程无法支撑该结论——这正是只核对答案会漏掉的一类样本。</div>",
+            '<div class="warn-banner"><b>答案对了，过程撑不住</b>：'
+            "最后数字对得上，但中间推理没法推出这个结论。只核答案会漏掉这类题。</div>",
             unsafe_allow_html=True,
         )
 
-    st.subheader("R1 流程追踪")
+    st.subheader("审查是怎么走的")
 
-    # Pass 1 — independent solve (private scaffold, never shown as gold).
     ind = extra.get("independent") or {}
     outline = ind.get("outline") or []
     outline_html = "".join(f"<li>{o}</li>" for o in outline)
     st.markdown(
-        '<div class="stage"><div class="h">① 独立求解</div>'
-        '<div class="mono">学生步骤不可见 · 只用来对照</div>'
-        f'<div>独立结论：<b>{ind.get("final_answer") or "—"}</b></div>'
+        '<div class="stage"><div class="h"><span class="n">1</span>自己先做一遍</div>'
+        '<div class="hint">先不看学生怎么写，独立算出一个答案，后面拿来对照。</div>'
+        f'<div>自己算出的答案：<b>{ind.get("final_answer") or "—"}</b></div>'
         f'<ul>{outline_html}</ul></div>',
         unsafe_allow_html=True,
     )
 
-    # Pass 2 — per-paragraph critique.
     sw = extra.get("stepwise") or {}
     rows = {r.get("step_id"): r for r in (sw.get("steps") or [])}
     step_html = []
@@ -536,29 +621,38 @@ def _render_r1(
         klass = "invalid" if verdict == "INVALID" else "unknown" if verdict == "UNKNOWN" else ""
         claim = row.get("claim") or ""
         step_html.append(
-            f'<div class="step {klass}"><b>Step {i}</b> &nbsp;{_verdict_badge(verdict)}<br>'
+            f'<div class="step {klass}"><b>第 {i} 步</b> &nbsp;{_verdict_badge(verdict)}<br>'
             f"{text}"
             + (f'<br><span class="mono">{claim}</span>' if claim else "")
             + "</div>"
         )
     st.markdown(
-        '<div class="stage"><div class="h">② 逐段审查</div>'
+        '<div class="stage"><div class="h"><span class="n">2</span>一段一段看</div>'
+        '<div class="hint">每一段只评这一段新引入的对错：成立、有错，或者说不清。</div>'
         f'{"".join(step_html)}</div>',
         unsafe_allow_html=True,
     )
 
-    # Pass 3/4 — adversarial debate, only when forced.
     triggers = extra.get("triggers") or []
     debate = extra.get("debate") or {}
     if extra.get("debate_triggered"):
-        trigger_html = " ".join(f'<span class="badge badge-warn">{t}</span>' for t in triggers)
+        trigger_names = {
+            "answer_mismatch": "答案对不上",
+            "independent_disagree": "两边答案差很远",
+            "stepwise_unknown": "有一步说不清",
+        }
+        trigger_html = " ".join(
+            f'<span class="badge badge-warn">{trigger_names.get(t, t)}</span>' for t in triggers
+        )
         acc = debate.get("accuser") or {}
         dfn = debate.get("defender") or {}
         arb = debate.get("arbiter") or {}
+        acc_step = acc.get("first_error_step")
+        acc_first = f"第 {acc_step} 步" if acc_step else "—"
         parts = [
-            '<div class="stage"><div class="h">③ 指控 / 辩护 / 仲裁</div>',
-            f"<div>触发条件：{trigger_html}</div>",
-            f'<div class="step invalid"><b>指控</b> · Step {acc.get("first_error_step")} · '
+            '<div class="stage"><div class="h"><span class="n">3</span>对不上再对质</div>',
+            f'<div class="hint">打开对质的原因：{trigger_html}</div>',
+            f'<div class="step invalid"><b>找错的一方</b> · {acc_first} · '
             f'{ERROR_TYPE_LABELS.get(acc.get("error_type") or "", acc.get("error_type") or "—")}'
             f'<br>{acc.get("charge") or "—"}',
         ]
@@ -566,45 +660,47 @@ def _render_r1(
             parts.append(f'<br><span class="mono">反例：{acc["counterexample"]}</span>')
         parts.append("</div>")
         rebuts = dfn.get("rebuts")
-        badge = "未反驳" if rebuts is False else "反驳成立" if rebuts is True else "无效"
+        badge = "没法反驳" if rebuts is False else "反驳成功" if rebuts is True else "说不清"
         parts.append(
-            f'<div class="step"><b>辩护</b> · <span class="badge">{badge}</span>'
+            f'<div class="step"><b>辩护的一方</b> · <span class="badge">{badge}</span>'
             f'<br>{dfn.get("reason") or "—"}</div>'
         )
         if arb:
             arb_label = "过程不成立" if arb.get("process_correct") is False else "过程成立"
+            arb_step = arb.get("first_error_step")
+            arb_first = f"第 {arb_step} 步" if arb_step else "—"
             parts.append(
                 f'<div class="step {"invalid" if arb.get("process_correct") is False else ""}">'
-                f"<b>仲裁</b> · {arb_label} · Step {arb.get('first_error_step') or '—'}"
+                f"<b>最后裁定</b> · {arb_label} · {arb_first}"
                 f'<br>{arb.get("reason") or "—"}</div>'
             )
         parts.append("</div>")
         st.markdown("".join(parts), unsafe_allow_html=True)
     else:
         st.markdown(
-            '<div class="stage"><div class="h">③ 指控 / 辩护 / 仲裁</div>'
-            '<div class="mono">未触发：独立结论一致、逐步审查无 UNKNOWN、'
-            "答案校验通过。</div></div>",
+            '<div class="stage"><div class="h"><span class="n">3</span>对不上再对质</div>'
+            '<div class="hint">这一题两边答案对得上，每一段也说得清，所以跳过对质。</div></div>',
             unsafe_allow_html=True,
         )
 
-    # Fusion.
     sym = extra.get("symbolic_first_invalid")
+    sym_txt = f"第 {sym} 步" if sym else "没有"
     st.markdown(
-        '<div class="stage"><div class="h">④ 融合</div>'
-        f'<div class="mono">符号 INVALID 优先；答案核失败时禁止再判过程成立。</div>'
-        f'<div>符号首个 INVALID：<b>Step {sym or "—"}</b></div>'
+        '<div class="stage"><div class="h"><span class="n">4</span>按规则下结论</div>'
+        '<div class="hint">能算出来的错优先；答案已经对不上，就不能再说过程成立。</div>'
+        f'<div>能直接算出来的第一处错误：<b>{sym_txt}</b></div>'
         f'<div>结论：{pred.get("reason") or "—"}</div></div>',
         unsafe_allow_html=True,
     )
-    st.caption(f"R1 调用次数：{extra.get('n_calls', '—')} · 方法：{extra.get('method', 'R1')}")
+    st.caption(f"模型调用 {extra.get('n_calls', '—')} 次")
 
 
 def page_dashboard() -> None:
     _hero(
-        "BENCHMARK DASHBOARD",
+        "评测看板",
         "MathXRay 评测看板",
-        "GSM8K + MATH + Omni-MATH。数字来自 reports/official/，由原始记录重算。",
+        "公开题上看「能不能指出最早错步」；私有高中题按来源拆开看，不能混成一个总分。",
+        show_flow=True,
     )
     data = _load_official()
     if not data:
@@ -614,10 +710,10 @@ def page_dashboard() -> None:
     ci = data.get("ci") or {}
     cols = st.columns(4)
     cards = [
-        ("M2 First-Error Exact", m.get("first_error_exact"), ci.get("first_error_exact", {}).get("fmt")),
-        ("M1 Error Detection", m.get("error_detection_recall"), ci.get("error_detection_recall", {}).get("fmt")),
-        ("M3 Correct-process Acc", m.get("correct_process_accuracy"), ci.get("correct_process_accuracy", {}).get("fmt")),
-        ("M5 Official Composite", m.get("official_composite"), None),
+        ("指出最早错步", m.get("first_error_exact"), ci.get("first_error_exact", {}).get("fmt")),
+        ("发现过程有错", m.get("error_detection_recall"), ci.get("error_detection_recall", {}).get("fmt")),
+        ("放过正确过程", m.get("correct_process_accuracy"), ci.get("correct_process_accuracy", {}).get("fmt")),
+        ("三项综合", m.get("official_composite"), None),
     ]
     n_show = m.get("n_all", data.get("n"))
     for col, (name, val, extra) in zip(cols, cards, strict=False):
@@ -629,47 +725,68 @@ def page_dashboard() -> None:
                 unsafe_allow_html=True,
             )
 
-    st.subheader("按数据集 / 难度")
+    st.subheader("按数据集拆开看")
     rows = []
     for src, row in sorted((data.get("per_source") or {}).items()):
         rows.append(
             {
-                "source": src,
-                "M1": _fmt(row.get("error_detection_recall")),
-                "M2 Exact": _fmt(row.get("first_error_exact")),
-                "M3 Correct": _fmt(row.get("correct_process_accuracy")),
-                "M5": _fmt(row.get("official_composite")),
-                "n": row.get("n_all"),
+                "数据集": src,
+                "发现有错": _fmt(row.get("error_detection_recall")),
+                "指出最早错步": _fmt(row.get("first_error_exact")),
+                "放过正确过程": _fmt(row.get("correct_process_accuracy")),
+                "综合": _fmt(row.get("official_composite")),
+                "题数": row.get("n_all"),
             }
         )
     if rows:
         st.dataframe(rows, use_container_width=True, hide_index=True)
-        m2_chart = {
-            src: float(row.get("first_error_exact") or 0)
-            for src, row in sorted((data.get("per_source") or {}).items())
-        }
-        st.bar_chart(m2_chart)
+        bars = []
+        for src, row in sorted((data.get("per_source") or {}).items()):
+            v = float(row.get("first_error_exact") or 0)
+            bars.append(
+                f'<div class="hbar"><div>{src}</div>'
+                f'<div class="track"><div class="fill" style="width:{v * 100:.1f}%"></div></div>'
+                f"<div>{v:.2f}</div></div>"
+            )
+        st.markdown(
+            '<div class="chart-card"><div class="cap">各数据集上，指出最早错步的比例</div>'
+            f"{''.join(bars)}</div>",
+            unsafe_allow_html=True,
+        )
 
     dist = data.get("error_type_distribution") or {}
     if dist:
-        st.subheader("预测错误类型分布")
+        st.subheader("预测出来的错误类型")
         labels = data.get("error_type_labels") or ERROR_TYPE_LABELS
-        st.bar_chart({labels.get(k, k): v for k, v in dist.items()})
+        mx = max(dist.values()) or 1
+        bars = []
+        for k, v in sorted(dist.items(), key=lambda kv: -kv[1]):
+            name = labels.get(k, k)
+            bars.append(
+                f'<div class="hbar"><div>{name}</div>'
+                f'<div class="track"><div class="fill" style="width:{v / mx * 100:.1f}%"></div></div>'
+                f"<div>{v}</div></div>"
+            )
+        st.markdown(
+            '<div class="chart-card"><div class="cap">模型给出的错误类型（题数）</div>'
+            f"{''.join(bars)}</div>",
+            unsafe_allow_html=True,
+        )
 
     uns = data.get("unsupported") or {}
     if uns:
-        st.subheader("答案正确但过程不成立")
+        st.subheader("答案对了，过程却撑不住")
         st.write(
-            f"Gold unsupported answers: **{uns.get('n_unsupported_answer')}** · "
-            f"Recall: **{_fmt(uns.get('unsupported_recall'))}**"
+            f"这类题有 **{uns.get('n_unsupported_answer')}** 道 · "
+            f"抓出来的比例 **{_fmt(uns.get('unsupported_recall'))}**"
         )
     bound = data.get("capability_boundary") or {}
     if bound:
         st.info(
-            f"能力边界：First-Error Exact 最大相邻降幅发生在 "
+            f"能力边界：指出最早错步掉得最明显的一段，是 "
             f"{bound.get('from_difficulty')} ({bound.get('from')}) → "
             f"{bound.get('to_difficulty')} ({bound.get('to')})，"
-            f"降幅 {_fmt(bound.get('drop'))}。"
+            f"降了 {_fmt(bound.get('drop'))}。"
         )
 
     hs = _load_hs_compare()
@@ -695,25 +812,7 @@ def page_dashboard() -> None:
                     f'<div class="v">{_fmt(val)}</div><div class="k">{foot}</div></div>',
                     unsafe_allow_html=True,
                 )
-        import pandas as pd
-
-        st.bar_chart(
-            pd.DataFrame(
-                {
-                    "B0": [
-                        float(b0.get("qwen_wrong_m1") or 0),
-                        float(b0.get("adversarial_m2") or 0),
-                        float(b0.get("official_m3") or 0),
-                    ],
-                    "R1": [
-                        float(r1.get("qwen_wrong_m1") or 0),
-                        float(r1.get("adversarial_m2") or 0),
-                        float(r1.get("official_m3") or 0),
-                    ],
-                },
-                index=["答案错·发现有错", "改错·步号一致", "详解·认为成立"],
-            )
-        )
+        st.markdown(_hs_bars(), unsafe_allow_html=True)
         st.info(
             f"R1 在答案错误样本上的 1.00，大约 {r1.get('gate_flips')} 条是「答案已经对不上」这条规则改判的，"
             f"逐步审查自己标错大约 {r1.get('stepwise_only_m1')}。"
@@ -723,22 +822,22 @@ def page_dashboard() -> None:
     full_path = OFFICIAL_DIR / "processbench_full_replay.json"
     if full_path.exists():
         full = json.loads(full_path.read_text(encoding="utf-8"))
-        st.subheader("B0 vs Full 符号融合回放")
+        st.subheader("B0 一次判断 和 更重的符号融合")
         st.write(
             {
-                "B0 M2": (full.get("B0") or {}).get("first_error_exact"),
-                "Full M2": (full.get("Full") or {}).get("first_error_exact"),
-                "Δ": full.get("delta_first_error_exact"),
-                "n": full.get("n"),
+                "一次判断 · 指出最早错步": (full.get("B0") or {}).get("first_error_exact"),
+                "符号融合 · 指出最早错步": (full.get("Full") or {}).get("first_error_exact"),
+                "相差": full.get("delta_first_error_exact"),
+                "题数": full.get("n"),
             }
         )
 
 
 def page_explorer() -> None:
     _hero(
-        "ERROR EXPLORER",
+        "翻看错题",
         "MathXRay 错误探索",
-        "筛选来源、过程状态与错误类型。样本 ID 与 raw JSONL 对齐。",
+        "按来源和过程状态筛选。点开一条，能看到标注和模型给出的结论。",
     )
     raw_path = next((p for p in RAW_CANDIDATES if p.exists()), None)
     if raw_path is None:
@@ -778,19 +877,19 @@ def page_explorer() -> None:
         pred = r.get("prediction") or {}
         table.append(
             {
-                "sample_id": r.get("sample_id"),
-                "source": r.get("source"),
-                "gold_P": r.get("gold_process_correct"),
-                "gold_step": r.get("gold_first_error_step"),
-                "pred_P": pred.get("process_correct"),
-                "pred_step": pred.get("first_error_step"),
-                "error_type": pred.get("error_type"),
-                "A_correct": r.get("gold_final_answer_correct"),
-                "reason": (pred.get("reason") or "")[:180],
+                "样本": r.get("sample_id"),
+                "来源": r.get("source"),
+                "标注过程": r.get("gold_process_correct"),
+                "标注首错": r.get("gold_first_error_step"),
+                "模型过程": pred.get("process_correct"),
+                "模型首错": pred.get("first_error_step"),
+                "错误类型": pred.get("error_type"),
+                "答案对不对": r.get("gold_final_answer_correct"),
+                "理由": (pred.get("reason") or "")[:180],
             }
         )
     st.dataframe(table, use_container_width=True, hide_index=True)
-    pick = st.selectbox("查看样本", [""] + [t["sample_id"] for t in table])
+    pick = st.selectbox("打开一条看看", [""] + [t["样本"] for t in table])
     if pick:
         rec = next(r for r in shown if r.get("sample_id") == pick)
         st.json(
@@ -805,6 +904,38 @@ def page_explorer() -> None:
                 "prediction": rec.get("prediction"),
             }
         )
+
+
+def _story_transport(idx: int, n: int) -> None:
+    embed = str(st.query_params.get("embed", "")).lower() in {"1", "true", "yes"}
+    capture = str(st.query_params.get("capture", "")).lower() in {"1", "true", "yes"}
+    if embed or capture:
+        return
+    if "story_play" not in st.session_state:
+        st.session_state.story_play = False
+    playing = bool(st.session_state.story_play)
+    c1, c2, c3, c4 = st.columns([1.1, 1.1, 1.1, 3.2])
+    with c1:
+        if st.button("◀ 上一页", disabled=idx <= 0, use_container_width=True):
+            st.session_state.story_play = False
+            st.query_params["slide"] = str(idx - 1)
+            st.rerun()
+    with c2:
+        label = "⏸ 暂停" if playing else "▶ 播放"
+        if st.button(label, use_container_width=True):
+            st.session_state.story_play = not playing
+            st.rerun()
+    with c3:
+        if st.button("下一页 ▶", disabled=idx >= n - 1 and not playing, use_container_width=True):
+            st.session_state.story_play = False
+            st.query_params["slide"] = str(0 if idx >= n - 1 else idx + 1)
+            st.rerun()
+    with c4:
+        st.caption("空格键在独立回放页更顺手。这边可以一页页翻，或按播放自动往下走。")
+    if st.session_state.story_play:
+        time.sleep(2.5)
+        st.query_params["slide"] = str(0 if idx >= n - 1 else idx + 1)
+        st.rerun()
 
 
 def _slide_shell(kicker: str, title: str, lead: str, body: str, page: str) -> None:
@@ -824,22 +955,22 @@ def _slide_shell(kicker: str, title: str, lead: str, body: str, page: str) -> No
 def _app_metrics(answer: str, answer_ok: bool | None, process_ok: bool | None, first: str) -> str:
     a_badge = _badge(answer_ok, "与参考答案一致", "与参考答案不一致")
     p_label = "成立" if process_ok else "不成立" if process_ok is False else "未知"
-    p_badge = _badge(process_ok, "Process ✓", "Process ✗")
+    p_badge = _badge(process_ok, "过程成立", "过程不成立")
     return (
         '<div class="app-metrics">'
         f'<div class="metric-card"><div class="k">最终答案</div><div class="v">{answer}</div>{a_badge}</div>'
         f'<div class="metric-card"><div class="k">过程判定</div><div class="v">{p_label}</div>{p_badge}</div>'
-        f'<div class="metric-card"><div class="k">最早错误</div><div class="v">{first}</div></div>'
+        f'<div class="metric-card"><div class="k">最早出错的一步</div><div class="v">{first}</div></div>'
         "</div>"
     )
 
 
 def _r1_flow(active: int | None) -> str:
     items = [
-        (1, "① 独立求解", "先自己做一遍。此时看不到学生步骤，结论只用来对照。"),
-        (2, "② 逐段审查", "每一段打 VALID / INVALID / UNKNOWN，并标出最早出错的那一步。"),
-        (3, "③ 指控 · 辩护 · 仲裁", "两边结论对不上、某段说不清、或答案校验失败时才打开。"),
-        (4, "④ 按规则汇总", "能用计算证伪的步骤优先；答案已经对不上时，禁止再说过程成立。"),
+        (1, "自己先做一遍", "先不看学生怎么写。算出一个答案，只用来对照。"),
+        (2, "一段一段看", "每一段标：成立、有错，或者说不清。最早出错的那一步单独记下。"),
+        (3, "对不上再对质", "两边答案差很远、某段说不清、或答案核失败时才打开。"),
+        (4, "按规则下结论", "能算出来的错优先；答案已经对不上时，禁止再说过程成立。"),
     ]
     parts = []
     for i, title, desc in items:
@@ -851,7 +982,7 @@ def _r1_flow(active: int | None) -> str:
 
 
 def _r1_pills(active: int) -> str:
-    names = ["独立求解", "逐段审查", "对质", "规则汇总"]
+    names = ["自己先做", "一段一段看", "对质", "下结论"]
     bits = []
     for i, name in enumerate(names, start=1):
         cls = "on" if i == active else ""
@@ -1007,13 +1138,14 @@ def page_story(slide: int) -> None:
             "介绍",
             "过程审查看什么",
             "模型会写出一串步骤。MathXRay 要回答两件事：过程能不能站住；如果站不住，错从哪一步进来。",
-            '<div class="kv3">'
-            '<div class="flow-box"><b>解题</b><div class="tiny">Hy3 按段落写出推理，并给出最终答案。</div></div>'
-            '<div class="flow-box"><b>核对答案</b><div class="tiny">最终答案和参考答案能否对上。对得上只说明结果对。</div></div>'
-            '<div class="flow-box"><b>审查过程</b><div class="tiny">逐步看推理是否成立，标出最早错误和后面跟着错的步骤。</div></div>'
+            _pipeline_html()
+            + '<div class="kv3">'
+            '<div class="flow-box"><b>写出步骤</b><div class="tiny">把推理拆成几段，最后给出答案。</div></div>'
+            '<div class="flow-box"><b>核对答案</b><div class="tiny">数字对得上，只说明结果对，过程仍可能有问题。</div></div>'
+            '<div class="flow-box"><b>审查过程</b><div class="tiny">一步一步看能不能站住，标出最早出错的那一步。</div></div>'
             "</div>"
             '<div class="kv">'
-            '<div class="flow-box"><b>前面</b><div class="tiny">算法怎么跑：一次判断（B0）和四段审查（R1）。</div></div>'
+            '<div class="flow-box"><b>前面</b><div class="tiny">两套审查：一次看完就给结论，或拆成四段慢慢看。</div></div>'
             '<div class="flow-box"><b>后面</b><div class="tiny">应用里的三道例题，公开评测和私有高中集上的结果。</div></div>'
             "</div>",
         ),
@@ -1061,7 +1193,7 @@ def page_story(slide: int) -> None:
         (
             "R1 · 总览",
             "把审查拆成四段",
-            "每一段只干一件事。后面的段可以读前面的产出；独立求解看不到学生步骤。",
+            "每一段只干一件事。后面的段可以读前面的产出；自己先做那一段看不到学生步骤。",
             _r1_flow(None)
             + '<p class="slide-p">和 B0 的差别：先自己做一遍当对照，再按段落表态；两边对不上才进入对质。'
             "最后按固定规则给出结论。</p>",
@@ -1084,11 +1216,11 @@ def page_story(slide: int) -> None:
             "现在才第一次看见学生步骤。每一段只评这一段新引入的对错。",
             _r1_pills(2)
             + '<div class="kv3">'
-            '<div class="flow-box ok"><b>VALID</b><div class="tiny">这一段本身站得住，没有引入新错误。</div></div>'
-            '<div class="flow-box bad"><b>INVALID</b><div class="tiny">这一段引入了错误。若前面都还对，它就是最早错误。</div></div>'
-            '<div class="flow-box warn"><b>UNKNOWN</b><div class="tiny">材料不够、式子含糊，这一段说不清。后面往往要对质。</div></div>'
+            '<div class="flow-box ok"><b>成立</b><div class="tiny">这一段本身站得住，没有引入新错误。</div></div>'
+            '<div class="flow-box bad"><b>有错</b><div class="tiny">这一段引入了错误。若前面都还对，它就是最早错误。</div></div>'
+            '<div class="flow-box warn"><b>说不清</b><div class="tiny">材料不够、式子含糊，这一段说不清。后面往往要对质。</div></div>'
             "</div>"
-            '<p class="slide-p">前面已经错了，后面顺着错数往下写，标成跟着错，不再另开一个首错。第一个 INVALID 进入汇总。</p>',
+            '<p class="slide-p">前面已经错了，后面顺着错数往下写，标成跟着错，不再另开一个首错。第一处有错进入汇总。</p>',
         ),
         (
             "R1 · 定位",
@@ -1144,9 +1276,9 @@ def page_story(slide: int) -> None:
         (
             "应用",
             "应用里怎么查看",
-            "打开「解题与审计」，选 R1 和演示案例，就能看到下面这样的结果，不必调用接口。",
+            "打开「解题与审查」，选四段审查和演示例子，就能看到下面这样的结果，不必调用接口。",
             '<div class="kv">'
-            '<div class="flow-box"><b>解题与审计</b><div class="tiny">选题目，看独立求解、逐段标记、对质和汇总。</div></div>'
+            '<div class="flow-box"><b>解题与审查</b><div class="tiny">选题目，看自己先做、一段一段标、对质和下结论。</div></div>'
             '<div class="flow-box"><b>评测看板</b><div class="tiny">公开集和私有集的数字、柱状图。</div></div>'
             '<div class="flow-box"><b>错误探索</b><div class="tiny">按来源和错误类型翻原始样本。</div></div>'
             '<div class="flow-box"><b>演示分镜</b><div class="tiny">当前这一套说明页，也可单独翻看。</div></div>'
@@ -1157,35 +1289,35 @@ def page_story(slide: int) -> None:
             "应用 · 例题 1",
             "过程成立的例子",
             "割草机两种模式：整块草坪 Turtle 60 分钟、Rabbit 40 分钟。今天各用一半，一共多少分钟？",
-            '<div class="app-frame"><div class="app-bar">解题与审计 · R1 反思式审查 · 演示案例</div>'
+            '<div class="app-frame"><div class="app-bar">解题与审查 · 四段审查 · 演示例子</div>'
             '<div class="app-q">一半 Turtle、一半 Rabbit。参考答案 50 分钟。</div>'
             + _app_metrics("50", True, True, "—")
-            + '<div class="flow-box ok"><b>独立求解</b> 同样得到 50。两边一致，不对质。</div>'
-            '<div class="flow-box ok"><b>Step 1–5</b> 全部 VALID：60/2=30，40/2=20，30+20=50。</div>'
+            + '<div class="flow-box ok"><b>自己先做一遍</b> 同样得到 50。两边一致，不对质。</div>'
+            '<div class="flow-box ok"><b>第 1–5 步</b> 全部成立：60/2=30，40/2=20，30+20=50。</div>'
             '<div class="tiny">每一步都有题设支撑，没有跳步。应用里会把五段都标成成立。</div></div>',
         ),
         (
             "应用 · 例题 2",
             "中间一步算错",
             "长方形长 12、宽 5，面积应是 60。学生写成 70。应用里会标出第 2 步。最后一步只是把错的数抄下去。",
-            '<div class="app-frame"><div class="app-bar">解题与审计 · R1 反思式审查 · 演示案例</div>'
+            '<div class="app-frame"><div class="app-bar">解题与审查 · 四段审查 · 演示例子</div>'
             '<div class="app-q">一个长方形长 12、宽 5。它的面积是多少？</div>'
-            + _app_metrics("70", False, False, "Step 2")
-            + '<div class="flow-box ok"><b>Step 1</b> VALID · 面积 = 长 × 宽</div>'
-            '<div class="flow-box bad"><b>Step 2</b> INVALID · 最早错误 · 计算错误 · <code>12×5=70</code>，应为 60</div>'
-            '<div class="flow-box warn"><b>Step 3</b> 跟着错 · 「因此面积为 70」只是把错的数抄下去</div>'
-            '<div class="tiny">独立求解得到 60，两边对不上，打开指控。反例 12×5≠70，辩护无法反驳。</div></div>',
+            + _app_metrics("70", False, False, "第 2 步")
+            + '<div class="flow-box ok"><b>第 1 步</b> 成立 · 面积 = 长 × 宽</div>'
+            '<div class="flow-box bad"><b>第 2 步</b> 有错 · 最早错误 · 计算错误 · <code>12×5=70</code>，应为 60</div>'
+            '<div class="flow-box warn"><b>第 3 步</b> 跟着错 · 「因此面积为 70」只是把错的数抄下去</div>'
+            '<div class="tiny">自己先做得到 60，两边对不上，打开对质。反例 12×5≠70，辩护没法反驳。</div></div>',
         ),
         (
             "应用 · 例题 3",
             "答案对了，过程不完整",
             "题目要与 v=(3,−4) 共线的非零向量。学生写成 (3λ,−4λ)，数字能对上，但没排除 λ=0。",
-            '<div class="app-frame"><div class="app-bar">解题与审计 · R1 反思式审查 · 演示案例</div>'
+            '<div class="app-frame"><div class="app-bar">解题与审查 · 四段审查 · 演示例子</div>'
             '<div class="app-q">已知向量 v = (3, −4)。写出所有与 v 共线的非零向量的一般形式。</div>'
-            + _app_metrics("(3λ, −4λ)", True, False, "Step 3")
-            + '<div class="flow-box warn"><b>答案对、过程撑不住</b> 参考答案也是这个形式，但过程漏了 λ≠0。</div>'
-            '<div class="flow-box ok"><b>Step 1–2</b> VALID · 共线向量写成数乘，代入得到 (3k,−4k)。</div>'
-            '<div class="flow-box bad"><b>Step 3</b> INVALID · λ 取 0 时得到零向量，题目要求非零。</div></div>',
+            + _app_metrics("(3λ, −4λ)", True, False, "第 3 步")
+            + '<div class="flow-box warn"><b>答案对了，过程撑不住</b> 参考答案也是这个形式，但过程漏了 λ≠0。</div>'
+            '<div class="flow-box ok"><b>第 1–2 步</b> 成立 · 共线向量写成数乘，代入得到 (3k,−4k)。</div>'
+            '<div class="flow-box bad"><b>第 3 步</b> 有错 · λ 取 0 时得到零向量，题目要求非零。</div></div>',
         ),
         (
             "公开评测",
@@ -1296,18 +1428,19 @@ def page_story(slide: int) -> None:
     idx = max(0, min(slide, len(slides) - 1))
     kicker, title, lead, body = slides[idx]
     _slide_shell(kicker, title, lead, body, f"{idx + 1} / {len(slides)}")
+    _story_transport(idx, len(slides))
 
 
 def main() -> None:
-    pages = ["解题与审计", "评测看板", "错误探索", "演示分镜"]
+    pages = ["解题与审查", "评测看板", "错误探索", "演示分镜"]
     page_from_q = str(st.query_params.get("page", "")).lower()
     page_map = {
-        "solve": "解题与审计",
+        "solve": "解题与审查",
         "dashboard": "评测看板",
         "explorer": "错误探索",
         "story": "演示分镜",
     }
-    default_page = page_map.get(page_from_q, "解题与审计")
+    default_page = page_map.get(page_from_q, "解题与审查")
     try:
         slide = int(st.query_params.get("slide", 0))
     except (TypeError, ValueError):
@@ -1317,13 +1450,13 @@ def main() -> None:
             f'<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">'
             f'{LOGO_SVG}<div><div style="font-family:Source Serif 4,serif;font-size:20px;'
             f'font-weight:700;color:#1a5fb4;">MathXRay</div>'
-            f'<div style="font-size:12px;color:#6b7280;">Hy3 数学推理过程审查</div></div></div>',
+            f'<div style="font-size:13px;color:#4a6a8a;">先做一遍，再看步骤对不对</div></div></div>',
             unsafe_allow_html=True,
         )
-        page = st.radio("页面", pages, index=pages.index(default_page))
+        page = st.radio("看哪一页", pages, index=pages.index(default_page))
         st.markdown("---")
-        st.caption("独立求解 · 逐段审查 · 指控 / 辩护 / 仲裁 · 规则汇总")
-    if page == "解题与审计":
+        st.caption("写出步骤 → 核对答案 → 审查过程 → 给出结论")
+    if page == "解题与审查":
         page_solve()
     elif page == "评测看板":
         page_dashboard()

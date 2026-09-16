@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MathXRay 演示回放</title>
+  <style>
+    :root {
+      --brand: #1a5fb4;
+      --soft: #c5d8f0;
+      --ink: #163a5f;
+      --muted: #4a6a8a;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; }
+    body {
+      font-family: "Noto Sans SC", "Segoe UI", sans-serif;
+      color: #fff;
+      background:
+        radial-gradient(900px 500px at 8% -10%, rgba(26,95,180,.55), transparent 55%),
+        radial-gradient(700px 420px at 100% 0%, rgba(90,150,220,.35), transparent 50%),
+        radial-gradient(800px 500px at 70% 120%, rgba(26,95,180,.4), transparent 55%),
+        #0e2744;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(197,216,240,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(197,216,240,.08) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
+    }
+    .wrap {
+      position: relative; z-index: 1;
+      max-width: 1280px; margin: 0 auto; height: 100%;
+      padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px;
+    }
+    header {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand svg { width: 32px; height: 32px; display: block; filter: drop-shadow(0 6px 12px rgba(0,0,0,.25)); }
+    .brand h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
+    .brand span { display: block; font-size: 12px; opacity: .75; font-weight: 500; }
+    .hint { font-size: 13px; color: var(--soft); }
+    .stage-card {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(197,216,240,.25);
+      border-radius: 18px;
+      padding: 10px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.28);
+      backdrop-filter: blur(16px);
+      flex: 1; min-height: 0; display: flex; flex-direction: column;
+    }
+    .stage {
+      position: relative; width: 100%; flex: 1; min-height: 0;
+      background: #0b1e33; border-radius: 12px; overflow: hidden;
+    }
+    .stage img {
+      width: 100%; height: 100%; object-fit: contain; display: block;
+      background: #f4f7fc;
+    }
+    .bar {
+      margin-top: 10px;
+      background: linear-gradient(180deg, rgba(26,95,180,.95), #134a8c);
+      border-radius: 14px;
+      padding: 10px 12px 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    }
+    .scrub {
+      -webkit-appearance: none; appearance: none; width: 100%; height: 8px;
+      border-radius: 999px; background: rgba(197,216,240,.28); outline: none; cursor: pointer;
+    }
+    .scrub::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+      background: #fff; border: 3px solid #c5d8f0; box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    }
+    .row {
+      display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap;
+    }
+    .btn {
+      width: 44px; height: 44px; border: 0; border-radius: 12px; cursor: pointer;
+      background: rgba(255,255,255,.14); color: #fff; font-size: 18px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn:hover { background: rgba(255,255,255,.26); }
+    .btn.play { width: 56px; background: #fff; color: var(--brand); font-size: 20px; font-weight: 700; }
+    .btn.play:hover { background: var(--soft); }
+    .meta { flex: 1; min-width: 180px; padding-left: 6px; }
+    .meta .t { font-size: 15px; font-weight: 700; }
+    .meta .n { font-size: 12px; color: var(--soft); margin-top: 2px; }
+    kbd {
+      font: 11px ui-monospace, monospace; border: 1px solid rgba(197,216,240,.4);
+      border-radius: 6px; padding: 1px 6px; color: var(--soft);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="8" fill="#1a5fb4"/>
+          <path d="M16 5 L27 16 L16 27 L5 16 Z" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+          <circle cx="16" cy="16" r="3.2" fill="#fff"/>
+          <path d="M16 9.5 V13.2 M16 18.8 V22.5 M9.5 16 H13.2 M18.8 16 H22.5" stroke="#c5d8f0" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <h1>MathXRay</h1>
+          <span>演示回放 · 可暂停、前进、后退</span>
+        </div>
+      </div>
+      <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页　<kbd>空格</kbd> 播放/暂停</div>
+    </header>
+    <div class="stage-card">
+      <div class="stage"><img id="frame" alt="MathXRay 演示帧" /></div>
+      <div class="bar">
+        <input class="scrub" id="scrub" type="range" min="0" max="30" value="0" />
+        <div class="row">
+          <button class="btn" id="prev" title="上一页">⏮</button>
+          <button class="btn play" id="play" title="播放/暂停">⏸</button>
+          <button class="btn" id="next" title="下一页">⏭</button>
+          <div class="meta">
+            <div class="t" id="title">演示</div>
+            <div class="n" id="count">1 / 31</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="frames/manifest.js"></script>
+  <script>
+    const data = window.MX_DEMO || { frames: [] };
+    const frames = data.frames || [];
+    const img = document.getElementById("frame");
+    const scrub = document.getElementById("scrub");
+    const title = document.getElementById("title");
+    const count = document.getElementById("count");
+    const playBtn = document.getElementById("play");
+    let i = 0, playing = true, timer = null;
+
+    function show(idx) {
+      if (!frames.length) return;
+      i = (idx + frames.length) % frames.length;
+      const f = frames[i];
+      img.src = f.src;
+      title.textContent = f.title || "MathXRay";
+      count.textContent = (i + 1) + " / " + frames.length;
+      scrub.max = String(frames.length - 1);
+      scrub.value = String(i);
+    }
+    function arm() {
+      clearTimeout(timer);
+      if (!playing || !frames.length) return;
+      timer = setTimeout(() => show(i + 1), frames[i].ms || 2400);
+    }
+    function toggle() {
+      playing = !playing;
+      playBtn.textContent = playing ? "⏸" : "▶";
+      if (playing) arm(); else clearTimeout(timer);
+    }
+    document.getElementById("prev").onclick = () => { playing = false; playBtn.textContent = "▶"; show(i - 1); };
+    document.getElementById("next").onclick = () => { playing = false; playBtn.textContent = "▶"; show(i + 1); };
+    playBtn.onclick = toggle;
+    scrub.oninput = () => { playing = false; playBtn.textContent = "▶"; show(Number(scrub.value)); };
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space") { e.preventDefault(); toggle(); }
+      if (e.code === "ArrowLeft") { playing = false; playBtn.textContent = "▶"; show(i - 1); }
+      if (e.code === "ArrowRight") { playing = false; playBtn.textContent = "▶"; show(i + 1); }
+    });
+    img.onload = () => { if (playing) arm(); };
+    show(0);
+  </script>
+</body>
+</html>
